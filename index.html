@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Piano Partner — Evaluator Prototype</title>
+  <style>
+    body { font-family: sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    label { display: block; margin-top: 1rem; font-weight: bold; }
+    canvas { border: 1px solid #ddd; margin-top: 0.5rem; width: 100%; max-width: 860px; height: 180px; }
+    pre { background: #f5f5f5; padding: 1rem; overflow-x: auto; max-height: 400px; }
+    button { margin-top: 1rem; padding: 0.5rem 1.5rem; font-size: 1rem; cursor: pointer; }
+    #status { margin-top: 0.5rem; color: #555; }
+    .summary { margin-top: 1rem; padding: 1rem; background: #eef; border-radius: 4px; }
+    #feedbackPanel table { border-collapse: collapse; margin: 0.5rem 0 1rem; }
+    #feedbackPanel td, #feedbackPanel th { border: 1px solid #ddd; padding: 2px 8px; font-size: 0.9rem; }
+    #feedbackPanel { margin-top: 1rem; padding: 1rem; background: #efe; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Piano Partner — core evaluator prototype</h1>
+  <p>Capture → align against sheet-music reference → extract performance diff. No full polyphonic pitch transcription attempted; see confidence tiers in output.</p>
+
+  <label for="refInput">Reference JSON (from reference-prep/make_reference.py)</label>
+  <input id="refInput" type="file" accept=".json" />
+
+  <label for="audioInput">Performance recording (.wav / .mp3)</label>
+  <input id="audioInput" type="file" accept="audio/*" />
+
+  <label>Or record directly in-app (captures raw PCM, no lossy codec)</label>
+  <button id="recordBtn" type="button">Record</button>
+  <button id="stopRecordBtn" type="button" disabled>Stop</button>
+  <button id="saveWavBtn" type="button" disabled>Save as .wav (dev/testing only)</button>
+  <button id="submitBtn" type="button">Submit for evaluation</button>
+  <span id="recordStatus"></span>
+  <span id="submitStatus"></span>
+
+  <div id="feedbackPanel" style="display:none"></div>
+
+  <label for="tempoMode">Tempo comparison mode</label>
+  <select id="tempoMode">
+    <option value="fixed">Fixed — diff against the reference's literal target tempo</option>
+    <option value="adaptive">Adaptive — diff against your own detected overall tempo (rhythmic consistency only)</option>
+  </select>
+
+  <button id="runBtn">Analyze</button>
+  <div id="status"></div>
+
+  <div class="summary" id="summary" style="display:none"></div>
+
+  <canvas id="onsetCanvas" width="860" height="180"></canvas>
+  <canvas id="pitchCanvas" width="860" height="140"></canvas>
+
+  <h3>Raw diff JSON</h3>
+  <button id="copyJsonBtn">Copy JSON</button>
+  <pre id="jsonOut">(run an analysis to see output)</pre>
+
+  <!-- Essentia.js prebuilt browser bundles, loaded via CDN (no build step). -->
+  <script src="https://unpkg.com/essentia.js/dist/essentia-wasm.web.js"></script>
+  <script src="https://unpkg.com/essentia.js/dist/essentia.js-core.js"></script>
+
+  <script src="js/audio-analysis.js?v=10"></script>
+  <script src="js/recorder.js?v=10"></script>
+  <script src="js/alignment.js?v=10"></script>
+  <script src="js/diff.js?v=10"></script>
+  <script src="js/visualize.js?v=10"></script>
+
+  <script>
+    const statusEl = document.getElementById("status");
+    const summaryEl = document.getElementById("summary");
+    const recordStatusEl = document.getElementById("recordStatus");
+    const recordBtn = document.getElementById("recordBtn");
+    const stopRecordBtn = document.getElementById("stopRecordBtn");
+    const saveWavBtn = document.getElementById("saveWavBtn");
+    let lastDiff = null;
+    let recordedPerformance = null; // { samples, sampleRate }, set after Stop; takes priority over the file input when present
+
+    recordBtn.addEventListener("click", async () => {
+      try {
+        recordedPerformance = null;
+        saveWavBtn.disabled = true;
+        await startRecording();
+        recordBtn.disabled = true;
+        stopRecordBtn.disabled = false;
+        recordStatusEl.textContent = "Recording...";
+      } catch (err) {
+        console.error(err);
+        recordStatusEl.textContent = "Mic access failed: " + err.message;
+      }
+    });
+
+    stopRecordBtn.addEventListener("click", async () => {
+      stopRecordBtn.disabled = true;
+      recordStatusEl.textContent = "Finishing...";
+      try {
+        recordedPerformance = await stopRecording();
+        const durationSec = recordedPerformance.samples.length / recordedPerformance.sampleRate;
+        recordStatusEl.textContent = `Captured ${durationSec.toFixed(1)}s. Ready to analyze.`;
+        saveWavBtn.disabled = false;
+      } catch (err) {
+        console.error(err);
+        recordStatusEl.textContent = "Recording failed: " + err.message;
+      } finally {
+        recordBtn.disabled = false;
+      }
+    });
+
+    saveWavBtn.addEventListener("click", () => {
+      if (!recordedPerformance) return;
+      const filename = `recording-${new Date().toISOString().replace(/[:.]/g, "-")}.wav`;
+      downloadRecordingAsWav(recordedPerformance.samples, recordedPerformance.sampleRate, filename);
+    });
+
+    document.getElementById("copyJsonBtn").addEventListener("click", async () => {
+      const copyBtn = document.getElementById("copyJsonBtn");
+      if (!lastDiff) {
+        statusEl.textContent = "Nothing to copy yet -- run an analysis first.";
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(lastDiff, null, 2));
+        copyBtn.textContent = "Copied!";
+      } catch (err) {
+        copyBtn.textContent = "Copy failed";
+        console.error(err);
+      }
+      setTimeout(() => { copyBtn.textContent = "Copy JSON"; }, 1500);
+    });
+
+    const BACKEND_URL = "http://127.0.0.1:8787";
+    const submitBtn = document.getElementById("submitBtn");
+    const submitStatusEl = document.getElementById("submitStatus");
+    const feedbackPanelEl = document.getElementById("feedbackPanel");
+
+    submitBtn.addEventListener("click", async () => {
+      const refFile = document.getElementById("refInput").files[0];
+      const audioFile = document.getElementById("audioInput").files[0];
+      if (!refFile || (!audioFile && !recordedPerformance)) {
+        submitStatusEl.textContent = "Select a reference JSON and either upload a recording or record one in-app first.";
+        return;
+      }
+
+      const audioBlob = recordedPerformance
+        ? encodeWav(recordedPerformance.samples, recordedPerformance.sampleRate)
+        : audioFile;
+
+      const form = new FormData();
+      form.append("reference", refFile.name);
+      form.append("audio", audioBlob, "recording.wav");
+
+      submitBtn.disabled = true;
+      feedbackPanelEl.style.display = "none";
+      submitStatusEl.textContent = "Uploading and evaluating (transcription can take ~10-20s)...";
+      try {
+        const res = await fetch(`${BACKEND_URL}/performances`, { method: "POST", body: form });
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`${res.status} ${text}`);
+        }
+        const result = await res.json();
+        submitStatusEl.textContent = `Done. Saved to performances/${result.folder}/`;
+        feedbackPanelEl.style.display = "block";
+        renderFeedback(feedbackPanelEl, result.feedback);
+      } catch (err) {
+        console.error(err);
+        submitStatusEl.textContent = "Evaluation failed: " + err.message +
+          " (is the backend running? .venv/bin/uvicorn server.app:app --port 8787)";
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    document.getElementById("runBtn").addEventListener("click", async () => {
+      const refFile = document.getElementById("refInput").files[0];
+      const audioFile = document.getElementById("audioInput").files[0];
+      if (!refFile || (!audioFile && !recordedPerformance)) {
+        statusEl.textContent = "Select a reference JSON and either upload a recording or record one in-app first.";
+        return;
+      }
+
+      try {
+        statusEl.textContent = "Loading reference...";
+        const reference = JSON.parse(await refFile.text());
+
+        statusEl.textContent = "Analyzing performance audio (onsets, dynamics, pitch, chroma)...";
+        const performance = recordedPerformance
+          ? await analyzeSamples(recordedPerformance.samples, recordedPerformance.sampleRate)
+          : await analyzePerformance(audioFile);
+
+        statusEl.textContent = "Aligning against reference (DTW)...";
+        const refChroma = reference.notes.map((n) => n.chroma);
+        const alignment = dtwAlign(performance.alignmentFeatures, refChroma);
+
+        statusEl.textContent = "Building diff...";
+        const tempoMode = document.getElementById("tempoMode").value;
+        const diff = buildDiff(reference, performance, alignment, { tempoMode });
+        lastDiff = diff;
+
+        drawOnsetTimeline(document.getElementById("onsetCanvas"), reference, performance, diff);
+        drawPitchContour(document.getElementById("pitchCanvas"), performance);
+        renderDiffJson(document.getElementById("jsonOut"), diff);
+
+        summaryEl.style.display = "block";
+        summaryEl.innerHTML = `
+          <strong>${diff.noteCount}/${diff.referenceNoteCount} reference notes matched</strong>
+          (detected ${Math.round(diff.onsetCountRatio * diff.referenceNoteCount)} onsets total,
+          ${diff.mergedNoteCount} reference notes shared a detected onset)<br>
+          Mode: <strong>${diff.tempoMode}</strong>
+          ${diff.tempoMode === "adaptive" ? `(estimated tempo ≈ ${diff.estimatedTempoBpm} bpm, scale ${diff.tempoScale}x reference)` : ""}<br>
+          Mean |timing deviation|: ${diff.meanAbsTimingDeviationSec}s &nbsp;
+          Max |timing deviation|: ${diff.maxAbsTimingDeviationSec}s<br>
+          Tempo stability (actual/expected IOI ratio): mean=${diff.tempoStability.meanRatio}, stdDev=${diff.tempoStability.stdDevRatio}<br>
+          Low-confidence chroma matches: ${diff.lowConfidenceMatchCount}/${diff.noteCount} (${diff.lowConfidenceMatchFraction})<br>
+          Melody interval check: ${diff.intervalMatchFraction === null ? "n/a" : diff.intervalMatchFraction} match rate
+          (coverage ${diff.intervalCheckCoverageFraction} — fraction of transitions with a usable pitch estimate)
+        `;
+
+        statusEl.textContent = "Done.";
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = "Error: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

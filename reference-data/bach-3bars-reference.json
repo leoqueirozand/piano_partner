@@ -1,0 +1,1258 @@
+{
+  "source_file": "/Users/leonardoandrade/Workspace/piano_partner/scores/js-bach-english-suite-no2-in-a-minor-bwv-807-1-prelude.mxl",
+  "part_indices": [
+    0,
+    1
+  ],
+  "start_measure": 1,
+  "end_measure": 3,
+  "tempo_bpm": 80.0,
+  "onsets_sec": [
+    0.375,
+    0.75,
+    1.125,
+    1.5,
+    1.6875,
+    1.875,
+    2.0625,
+    2.25,
+    2.4375,
+    2.625,
+    2.625,
+    2.8125,
+    3.0,
+    3.0,
+    3.1875,
+    3.375,
+    3.375,
+    3.5625,
+    3.75,
+    3.75,
+    3.9375,
+    3.9375,
+    4.125,
+    4.125,
+    4.3125,
+    4.3125,
+    4.5,
+    4.5,
+    4.6875,
+    4.875,
+    4.875,
+    5.0625,
+    5.25,
+    5.25,
+    5.4375,
+    5.625,
+    5.625,
+    5.8125,
+    6.0,
+    6.0,
+    6.1875,
+    6.375,
+    6.375,
+    6.5625
+  ],
+  "notes": [
+    {
+      "onset_sec": 0.375,
+      "duration_sec": 0.375,
+      "midi_pitches": [
+        76
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 1.5
+    },
+    {
+      "onset_sec": 0.75,
+      "duration_sec": 0.375,
+      "midi_pitches": [
+        69
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 2.0
+    },
+    {
+      "onset_sec": 1.125,
+      "duration_sec": 0.375,
+      "midi_pitches": [
+        81
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 2.5
+    },
+    {
+      "onset_sec": 1.5,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        79
+      ],
+      "pitch_names": [
+        "G"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 1.6875,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        76
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.25
+    },
+    {
+      "onset_sec": 1.875,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        77
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.5
+    },
+    {
+      "onset_sec": 2.0625,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        74
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.75
+    },
+    {
+      "onset_sec": 2.25,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        76
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 2.4375,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        74
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 1.25
+    },
+    {
+      "onset_sec": 2.625,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        72
+      ],
+      "pitch_names": [
+        "C"
+      ],
+      "chroma": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 1.5
+    },
+    {
+      "onset_sec": 2.625,
+      "duration_sec": 0.375,
+      "midi_pitches": [
+        64
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 1.5
+    },
+    {
+      "onset_sec": 2.8125,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        71
+      ],
+      "pitch_names": [
+        "B"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "measure": 2,
+      "beat": 1.75
+    },
+    {
+      "onset_sec": 3.0,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        72
+      ],
+      "pitch_names": [
+        "C"
+      ],
+      "chroma": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 2.0
+    },
+    {
+      "onset_sec": 3.0,
+      "duration_sec": 0.375,
+      "midi_pitches": [
+        57
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 2.0
+    },
+    {
+      "onset_sec": 3.1875,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        71
+      ],
+      "pitch_names": [
+        "B"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "measure": 2,
+      "beat": 2.25
+    },
+    {
+      "onset_sec": 3.375,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        72
+      ],
+      "pitch_names": [
+        "C"
+      ],
+      "chroma": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 2.5
+    },
+    {
+      "onset_sec": 3.375,
+      "duration_sec": 0.375,
+      "midi_pitches": [
+        69
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 2.5
+    },
+    {
+      "onset_sec": 3.5625,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        77
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 2.75
+    },
+    {
+      "onset_sec": 3.75,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        71
+      ],
+      "pitch_names": [
+        "B"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "measure": 2,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 3.75,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        67
+      ],
+      "pitch_names": [
+        "G"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 3.9375,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        76
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 3.25
+    },
+    {
+      "onset_sec": 3.9375,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        64
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 3.25
+    },
+    {
+      "onset_sec": 4.125,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        69
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 3.5
+    },
+    {
+      "onset_sec": 4.125,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        65
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 3.5
+    },
+    {
+      "onset_sec": 4.3125,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        74
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 3.75
+    },
+    {
+      "onset_sec": 4.3125,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        62
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 3.75
+    },
+    {
+      "onset_sec": 4.5,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        68
+      ],
+      "pitch_names": [
+        "G#"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 4.5,
+      "duration_sec": 0.375,
+      "midi_pitches": [
+        64
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 4.6875,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        74
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 1.25
+    },
+    {
+      "onset_sec": 4.875,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        71
+      ],
+      "pitch_names": [
+        "B"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "measure": 3,
+      "beat": 1.5
+    },
+    {
+      "onset_sec": 4.875,
+      "duration_sec": 0.375,
+      "midi_pitches": [
+        52
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 1.5
+    },
+    {
+      "onset_sec": 5.0625,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        68
+      ],
+      "pitch_names": [
+        "G#"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 1.75
+    },
+    {
+      "onset_sec": 5.25,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        74
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 2.0
+    },
+    {
+      "onset_sec": 5.25,
+      "duration_sec": 0.375,
+      "midi_pitches": [
+        56
+      ],
+      "pitch_names": [
+        "G#"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 2.0
+    },
+    {
+      "onset_sec": 5.4375,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        71
+      ],
+      "pitch_names": [
+        "B"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "measure": 3,
+      "beat": 2.25
+    },
+    {
+      "onset_sec": 5.625,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        68
+      ],
+      "pitch_names": [
+        "G#"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 2.5
+    },
+    {
+      "onset_sec": 5.625,
+      "duration_sec": 0.375,
+      "midi_pitches": [
+        59
+      ],
+      "pitch_names": [
+        "B"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "measure": 3,
+      "beat": 2.5
+    },
+    {
+      "onset_sec": 5.8125,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        71
+      ],
+      "pitch_names": [
+        "B"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "measure": 3,
+      "beat": 2.75
+    },
+    {
+      "onset_sec": 6.0,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        64
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 6.0,
+      "duration_sec": 0.375,
+      "midi_pitches": [
+        56
+      ],
+      "pitch_names": [
+        "G#"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 6.1875,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        74
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 3.25
+    },
+    {
+      "onset_sec": 6.375,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        72
+      ],
+      "pitch_names": [
+        "C"
+      ],
+      "chroma": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 3.5
+    },
+    {
+      "onset_sec": 6.375,
+      "duration_sec": 0.375,
+      "midi_pitches": [
+        52
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 3.5
+    },
+    {
+      "onset_sec": 6.5625,
+      "duration_sec": 0.1875,
+      "midi_pitches": [
+        71
+      ],
+      "pitch_names": [
+        "B"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "measure": 3,
+      "beat": 3.75
+    }
+  ],
+  "beats": [
+    {
+      "measure": 1,
+      "beat": 1,
+      "onset_sec": 0.0,
+      "duration_sec": 0.75
+    },
+    {
+      "measure": 1,
+      "beat": 2,
+      "onset_sec": 0.75,
+      "duration_sec": 0.75
+    },
+    {
+      "measure": 1,
+      "beat": 3,
+      "onset_sec": 1.5,
+      "duration_sec": 0.75
+    },
+    {
+      "measure": 2,
+      "beat": 1,
+      "onset_sec": 2.25,
+      "duration_sec": 0.75
+    },
+    {
+      "measure": 2,
+      "beat": 2,
+      "onset_sec": 3.0,
+      "duration_sec": 0.75
+    },
+    {
+      "measure": 2,
+      "beat": 3,
+      "onset_sec": 3.75,
+      "duration_sec": 0.75
+    },
+    {
+      "measure": 3,
+      "beat": 1,
+      "onset_sec": 4.5,
+      "duration_sec": 0.75
+    },
+    {
+      "measure": 3,
+      "beat": 2,
+      "onset_sec": 5.25,
+      "duration_sec": 0.75
+    },
+    {
+      "measure": 3,
+      "beat": 3,
+      "onset_sec": 6.0,
+      "duration_sec": 0.75
+    }
+  ]
+}

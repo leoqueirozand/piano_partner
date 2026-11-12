@@ -1,0 +1,721 @@
+{
+  "tempoMode": "adaptive",
+  "tempoScale": 1.022,
+  "estimatedTempoBpm": 117.454,
+  "noteCount": 33,
+  "referenceNoteCount": 33,
+  "onsetCountRatio": 1.152,
+  "mergedNoteCount": 2,
+  "meanAbsTimingDeviationSec": 0.306,
+  "maxAbsTimingDeviationSec": 3.495,
+  "tempoStability": {
+    "meanRatio": 1.296,
+    "stdDevRatio": 1.069,
+    "ratios": [
+      1.09,
+      0.957,
+      1,
+      1,
+      3.129,
+      0,
+      1.094,
+      1.045,
+      1.045,
+      0.996,
+      0.91,
+      0.957,
+      1.09,
+      1,
+      1.024,
+      1.068,
+      1.159,
+      0.816,
+      0.957,
+      0.91,
+      1.086,
+      0.978,
+      0.91,
+      1.047,
+      0.816,
+      1.275,
+      1.114,
+      0.953,
+      0.953,
+      0.957,
+      4.535,
+      5.589
+    ]
+  },
+  "lowConfidenceMatchCount": 9,
+  "lowConfidenceMatchFraction": 0.273,
+  "intervalCheckCoverageFraction": 0.719,
+  "intervalMatchFraction": 0.826,
+  "perNote": [
+    {
+      "refIdx": 0,
+      "perfIdx": 0,
+      "expectedOnsetSec": 0.708,
+      "actualOnsetSec": 0.708,
+      "timingDeviationSec": 0,
+      "expectedPitchNames": [
+        "D"
+      ],
+      "amplitude": 0.04919717345246242,
+      "alignmentDistance": 0.46,
+      "chromaDistance": 0.46,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": null,
+        "estimatedSemitones": null,
+        "pitchClassMatch": null
+      }
+    },
+    {
+      "refIdx": 1,
+      "perfIdx": 1,
+      "expectedOnsetSec": 1.219,
+      "actualOnsetSec": 1.265,
+      "timingDeviationSec": 0.046,
+      "expectedPitchNames": [
+        "G"
+      ],
+      "amplitude": 0.03535413254807195,
+      "alignmentDistance": 0.982,
+      "chromaDistance": 0.982,
+      "lowConfidenceMatch": true,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": null,
+        "estimatedSemitones": null,
+        "pitchClassMatch": null
+      }
+    },
+    {
+      "refIdx": 2,
+      "perfIdx": 2,
+      "expectedOnsetSec": 1.474,
+      "actualOnsetSec": 1.509,
+      "timingDeviationSec": 0.035,
+      "expectedPitchNames": [
+        "A"
+      ],
+      "amplitude": 0.09005993280859692,
+      "alignmentDistance": 0.162,
+      "chromaDistance": 0.99,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": null,
+        "estimatedSemitones": null,
+        "pitchClassMatch": null
+      }
+    },
+    {
+      "refIdx": 3,
+      "perfIdx": 3,
+      "expectedOnsetSec": 1.73,
+      "actualOnsetSec": 1.765,
+      "timingDeviationSec": 0.035,
+      "expectedPitchNames": [
+        "B"
+      ],
+      "amplitude": 0.10406960543819323,
+      "alignmentDistance": 0.162,
+      "chromaDistance": 0.993,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": 2,
+        "estimatedSemitones": 2,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 4,
+      "perfIdx": 4,
+      "expectedOnsetSec": 1.985,
+      "actualOnsetSec": 2.02,
+      "timingDeviationSec": 0.035,
+      "expectedPitchNames": [
+        "C"
+      ],
+      "amplitude": 0.060708630548909744,
+      "alignmentDistance": 0.168,
+      "chromaDistance": 0.441,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": 1,
+        "estimatedSemitones": 1.1,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 5,
+      "perfIdx": 6,
+      "expectedOnsetSec": 2.241,
+      "actualOnsetSec": 2.821,
+      "timingDeviationSec": 0.58,
+      "expectedPitchNames": [
+        "D"
+      ],
+      "amplitude": 0.04482147759812811,
+      "alignmentDistance": 0.42,
+      "chromaDistance": 0.42,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": true,
+      "intervalFromPrev": {
+        "expectedSemitones": null,
+        "estimatedSemitones": null,
+        "pitchClassMatch": null
+      }
+    },
+    {
+      "refIdx": 6,
+      "perfIdx": 6,
+      "expectedOnsetSec": 2.752,
+      "actualOnsetSec": 2.821,
+      "timingDeviationSec": 0.07,
+      "expectedPitchNames": [
+        "G"
+      ],
+      "amplitude": 0.04482147759812811,
+      "alignmentDistance": 0.979,
+      "chromaDistance": 0.979,
+      "lowConfidenceMatch": true,
+      "mergedWithAnotherNote": true,
+      "intervalFromPrev": {
+        "expectedSemitones": null,
+        "estimatedSemitones": null,
+        "pitchClassMatch": null
+      }
+    },
+    {
+      "refIdx": 7,
+      "perfIdx": 7,
+      "expectedOnsetSec": 3.262,
+      "actualOnsetSec": 3.379,
+      "timingDeviationSec": 0.116,
+      "expectedPitchNames": [
+        "G"
+      ],
+      "amplitude": 0.04243039609831016,
+      "alignmentDistance": 0.979,
+      "chromaDistance": 0.979,
+      "lowConfidenceMatch": true,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": null,
+        "estimatedSemitones": null,
+        "pitchClassMatch": null
+      }
+    },
+    {
+      "refIdx": 8,
+      "perfIdx": 8,
+      "expectedOnsetSec": 3.773,
+      "actualOnsetSec": 3.913,
+      "timingDeviationSec": 0.139,
+      "expectedPitchNames": [
+        "E"
+      ],
+      "amplitude": 0.08610803532093744,
+      "alignmentDistance": 0.168,
+      "chromaDistance": 0.46,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": 9,
+        "estimatedSemitones": 4,
+        "pitchClassMatch": false
+      }
+    },
+    {
+      "refIdx": 9,
+      "perfIdx": 9,
+      "expectedOnsetSec": 4.284,
+      "actualOnsetSec": 4.447,
+      "timingDeviationSec": 0.163,
+      "expectedPitchNames": [
+        "C"
+      ],
+      "amplitude": 0.04999542014366427,
+      "alignmentDistance": 0.168,
+      "chromaDistance": 0.975,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": -4,
+        "estimatedSemitones": -4,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 10,
+      "perfIdx": 10,
+      "expectedOnsetSec": 4.54,
+      "actualOnsetSec": 4.702,
+      "timingDeviationSec": 0.163,
+      "expectedPitchNames": [
+        "D"
+      ],
+      "amplitude": 0.04331051708800783,
+      "alignmentDistance": 0.162,
+      "chromaDistance": 0.979,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": 2,
+        "estimatedSemitones": 1.9,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 11,
+      "perfIdx": 11,
+      "expectedOnsetSec": 4.795,
+      "actualOnsetSec": 4.934,
+      "timingDeviationSec": 0.139,
+      "expectedPitchNames": [
+        "E"
+      ],
+      "amplitude": 0.0642621335150756,
+      "alignmentDistance": 0.168,
+      "chromaDistance": 0.31,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": 2,
+        "estimatedSemitones": 2.1,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 12,
+      "perfIdx": 12,
+      "expectedOnsetSec": 5.05,
+      "actualOnsetSec": 5.178,
+      "timingDeviationSec": 0.128,
+      "expectedPitchNames": [
+        "F#"
+      ],
+      "amplitude": 0.06028227501247589,
+      "alignmentDistance": 0.168,
+      "chromaDistance": 0.992,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": 2,
+        "estimatedSemitones": 2,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 13,
+      "perfIdx": 13,
+      "expectedOnsetSec": 5.306,
+      "actualOnsetSec": 5.457,
+      "timingDeviationSec": 0.151,
+      "expectedPitchNames": [
+        "G"
+      ],
+      "amplitude": 0.061065806918633884,
+      "alignmentDistance": 0.168,
+      "chromaDistance": 1,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": 1,
+        "estimatedSemitones": 1,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 14,
+      "perfIdx": 14,
+      "expectedOnsetSec": 5.817,
+      "actualOnsetSec": 5.968,
+      "timingDeviationSec": 0.151,
+      "expectedPitchNames": [
+        "G"
+      ],
+      "amplitude": 0.04099378182542272,
+      "alignmentDistance": 0.997,
+      "chromaDistance": 0.997,
+      "lowConfidenceMatch": true,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": null,
+        "estimatedSemitones": null,
+        "pitchClassMatch": null
+      }
+    },
+    {
+      "refIdx": 15,
+      "perfIdx": 15,
+      "expectedOnsetSec": 6.327,
+      "actualOnsetSec": 6.49,
+      "timingDeviationSec": 0.163,
+      "expectedPitchNames": [
+        "G"
+      ],
+      "amplitude": 0.03312659989632009,
+      "alignmentDistance": 0.998,
+      "chromaDistance": 0.998,
+      "lowConfidenceMatch": true,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": null,
+        "estimatedSemitones": null,
+        "pitchClassMatch": null
+      }
+    },
+    {
+      "refIdx": 16,
+      "perfIdx": 16,
+      "expectedOnsetSec": 6.838,
+      "actualOnsetSec": 7.036,
+      "timingDeviationSec": 0.197,
+      "expectedPitchNames": [
+        "C"
+      ],
+      "amplitude": 0.09392712464034836,
+      "alignmentDistance": 0.168,
+      "chromaDistance": 0.441,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": 5,
+        "estimatedSemitones": -7,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 17,
+      "perfIdx": 17,
+      "expectedOnsetSec": 7.349,
+      "actualOnsetSec": 7.628,
+      "timingDeviationSec": 0.279,
+      "expectedPitchNames": [
+        "D"
+      ],
+      "amplitude": 0.049170642313064145,
+      "alignmentDistance": 0.168,
+      "chromaDistance": 0.999,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": 2,
+        "estimatedSemitones": 2,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 18,
+      "perfIdx": 18,
+      "expectedOnsetSec": 7.605,
+      "actualOnsetSec": 7.837,
+      "timingDeviationSec": 0.232,
+      "expectedPitchNames": [
+        "C"
+      ],
+      "amplitude": 0.06802622132228678,
+      "alignmentDistance": 0.168,
+      "chromaDistance": 0.413,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": -2,
+        "estimatedSemitones": -2,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 19,
+      "perfIdx": 19,
+      "expectedOnsetSec": 7.86,
+      "actualOnsetSec": 8.081,
+      "timingDeviationSec": 0.221,
+      "expectedPitchNames": [
+        "B"
+      ],
+      "amplitude": 0.09709044619559387,
+      "alignmentDistance": 0.162,
+      "chromaDistance": 0.998,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": -1,
+        "estimatedSemitones": -1.1,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 20,
+      "perfIdx": 20,
+      "expectedOnsetSec": 8.115,
+      "actualOnsetSec": 8.313,
+      "timingDeviationSec": 0.197,
+      "expectedPitchNames": [
+        "A"
+      ],
+      "amplitude": 0.11661679095624297,
+      "alignmentDistance": 0.162,
+      "chromaDistance": 0.975,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": -2,
+        "estimatedSemitones": -2,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 21,
+      "perfIdx": 21,
+      "expectedOnsetSec": 8.371,
+      "actualOnsetSec": 8.591,
+      "timingDeviationSec": 0.221,
+      "expectedPitchNames": [
+        "B"
+      ],
+      "amplitude": 0.10211132856766206,
+      "alignmentDistance": 0.162,
+      "chromaDistance": 0.999,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": 2,
+        "estimatedSemitones": 2,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 22,
+      "perfIdx": 22,
+      "expectedOnsetSec": 8.882,
+      "actualOnsetSec": 9.091,
+      "timingDeviationSec": 0.209,
+      "expectedPitchNames": [
+        "C"
+      ],
+      "amplitude": 0.04790193033152353,
+      "alignmentDistance": 0.986,
+      "chromaDistance": 0.986,
+      "lowConfidenceMatch": true,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": null,
+        "estimatedSemitones": null,
+        "pitchClassMatch": null
+      }
+    },
+    {
+      "refIdx": 23,
+      "perfIdx": 23,
+      "expectedOnsetSec": 9.137,
+      "actualOnsetSec": 9.323,
+      "timingDeviationSec": 0.186,
+      "expectedPitchNames": [
+        "B"
+      ],
+      "amplitude": 0.06700224588143658,
+      "alignmentDistance": 0.162,
+      "chromaDistance": 0.998,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": -1,
+        "estimatedSemitones": 0,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 24,
+      "perfIdx": 24,
+      "expectedOnsetSec": 9.392,
+      "actualOnsetSec": 9.59,
+      "timingDeviationSec": 0.197,
+      "expectedPitchNames": [
+        "A"
+      ],
+      "amplitude": 0.08836286768681526,
+      "alignmentDistance": 0.162,
+      "chromaDistance": 0.978,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": -2,
+        "estimatedSemitones": -2,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 25,
+      "perfIdx": 25,
+      "expectedOnsetSec": 9.648,
+      "actualOnsetSec": 9.799,
+      "timingDeviationSec": 0.151,
+      "expectedPitchNames": [
+        "G"
+      ],
+      "amplitude": 0.05774076877925908,
+      "alignmentDistance": 0.168,
+      "chromaDistance": 0.986,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": -2,
+        "estimatedSemitones": -1.9,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 26,
+      "perfIdx": 26,
+      "expectedOnsetSec": 9.903,
+      "actualOnsetSec": 10.124,
+      "timingDeviationSec": 0.221,
+      "expectedPitchNames": [
+        "F#"
+      ],
+      "amplitude": 0.08286962002861567,
+      "alignmentDistance": 0.162,
+      "chromaDistance": 0.987,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": -1,
+        "estimatedSemitones": -1.1,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 27,
+      "perfIdx": 27,
+      "expectedOnsetSec": 10.414,
+      "actualOnsetSec": 10.693,
+      "timingDeviationSec": 0.279,
+      "expectedPitchNames": [
+        "G"
+      ],
+      "amplitude": 0.05223962965414989,
+      "alignmentDistance": 0.163,
+      "chromaDistance": 0.999,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": 1,
+        "estimatedSemitones": 1.05,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 28,
+      "perfIdx": 28,
+      "expectedOnsetSec": 10.67,
+      "actualOnsetSec": 10.937,
+      "timingDeviationSec": 0.267,
+      "expectedPitchNames": [
+        "A"
+      ],
+      "amplitude": 0.09155373611521342,
+      "alignmentDistance": 0.162,
+      "chromaDistance": 0.967,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": 2,
+        "estimatedSemitones": 1.95,
+        "pitchClassMatch": true
+      }
+    },
+    {
+      "refIdx": 29,
+      "perfIdx": 29,
+      "expectedOnsetSec": 10.925,
+      "actualOnsetSec": 11.18,
+      "timingDeviationSec": 0.255,
+      "expectedPitchNames": [
+        "B"
+      ],
+      "amplitude": 0.10473756955340832,
+      "alignmentDistance": 1,
+      "chromaDistance": 0.997,
+      "lowConfidenceMatch": true,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": 2,
+        "estimatedSemitones": -14,
+        "pitchClassMatch": false
+      }
+    },
+    {
+      "refIdx": 30,
+      "perfIdx": 30,
+      "expectedOnsetSec": 11.18,
+      "actualOnsetSec": 11.424,
+      "timingDeviationSec": 0.244,
+      "expectedPitchNames": [
+        "G"
+      ],
+      "amplitude": 0.053206270529615796,
+      "alignmentDistance": 0.162,
+      "chromaDistance": 0.999,
+      "lowConfidenceMatch": false,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": -4,
+        "estimatedSemitones": 0,
+        "pitchClassMatch": false
+      }
+    },
+    {
+      "refIdx": 31,
+      "perfIdx": 32,
+      "expectedOnsetSec": 11.436,
+      "actualOnsetSec": 12.585,
+      "timingDeviationSec": 1.149,
+      "expectedPitchNames": [
+        "B"
+      ],
+      "amplitude": 0.14087803055607553,
+      "alignmentDistance": 0.963,
+      "chromaDistance": 0.997,
+      "lowConfidenceMatch": true,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": 4,
+        "estimatedSemitones": 14,
+        "pitchClassMatch": false
+      }
+    },
+    {
+      "refIdx": 32,
+      "perfIdx": 36,
+      "expectedOnsetSec": 11.947,
+      "actualOnsetSec": 15.441,
+      "timingDeviationSec": 3.495,
+      "expectedPitchNames": [
+        "A"
+      ],
+      "amplitude": 0.02675028521636959,
+      "alignmentDistance": 0.995,
+      "chromaDistance": 0.995,
+      "lowConfidenceMatch": true,
+      "mergedWithAnotherNote": false,
+      "intervalFromPrev": {
+        "expectedSemitones": null,
+        "estimatedSemitones": null,
+        "pitchClassMatch": null
+      }
+    }
+  ],
+  "confidence": {
+    "timing": "high",
+    "dynamics": "high",
+    "melodyPitch": "medium",
+    "harmonyChords": "not_attempted"
+  }
+}

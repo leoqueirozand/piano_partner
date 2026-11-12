@@ -1,0 +1,211 @@
+{
+  "source_file": "scores/bach-minuet-g.mxl",
+  "part_index": 0,
+  "start_measure": 1,
+  "end_measure": 2,
+  "tempo_bpm": 120.0,
+  "onsets_sec": [
+    0.0,
+    0.5,
+    0.75,
+    1.0,
+    1.25,
+    1.5,
+    2.0,
+    2.5
+  ],
+  "notes": [
+    {
+      "onset_sec": 0.0,
+      "duration_sec": 0.5,
+      "midi_pitches": [
+        74
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "onset_sec": 0.5,
+      "duration_sec": 0.25,
+      "midi_pitches": [
+        67
+      ],
+      "pitch_names": [
+        "G"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "onset_sec": 0.75,
+      "duration_sec": 0.25,
+      "midi_pitches": [
+        69
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "onset_sec": 1.0,
+      "duration_sec": 0.25,
+      "midi_pitches": [
+        71
+      ],
+      "pitch_names": [
+        "B"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "onset_sec": 1.25,
+      "duration_sec": 0.25,
+      "midi_pitches": [
+        72
+      ],
+      "pitch_names": [
+        "C"
+      ],
+      "chroma": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "onset_sec": 1.5,
+      "duration_sec": 0.5,
+      "midi_pitches": [
+        74
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "onset_sec": 2.0,
+      "duration_sec": 0.5,
+      "midi_pitches": [
+        67
+      ],
+      "pitch_names": [
+        "G"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "onset_sec": 2.5,
+      "duration_sec": 0.5,
+      "midi_pitches": [
+        67
+      ],
+      "pitch_names": [
+        "G"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

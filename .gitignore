@@ -1,0 +1,13 @@
+# Python virtual environment -- see README for `python3.11 -m venv .venv &&
+# pip install -r requirements.txt` to recreate it.
+.venv/
+__pycache__/
+*.pyc
+
+# Generated per-performance output (recording, transcriptions, feedback) --
+# grows with every Submit, not something to version. See server/app.py.
+performances/*
+!performances/.gitkeep
+
+.DS_Store
+node_modules/
