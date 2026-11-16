@@ -35,6 +35,7 @@ Usage: python evaluate.py <reference.json> <bytedance.json> <basicpitch.json> [l
 import json
 import statistics
 import sys
+from pathlib import Path
 
 from align_sequence import align
 from regions import build_regions, classify_region, corroborating_regions, region_time_range
@@ -53,6 +54,8 @@ HARMONIC_INTERVALS_SEMITONES = (12, 19, 24)
 HARMONIC_RESONANCE_MAX_DUR_SEC = 0.15
 RESONANCE_LOOKAHEAD_SEC = 0.1
 CROSS_MODEL_WINDOW_SEC = 0.1
+
+BOUNDARY_NOISE_WINDOW_SEC = 1.0  # pre/post-roll noise (mic pickup before/after playing) clusters here
 
 OCTAVE_CONFUSION_SEMITONES = (12, 24)
 OCTAVE_SEARCH_WINDOW_SEC = 0.25
@@ -86,6 +89,19 @@ def load_notes(path):
     for n in notes:
         n["consumed"] = False
     return notes
+
+
+def load_pedal_events(bd_path):
+    """Sustain-pedal on/off windows, from the sibling file transcribe.py
+    writes next to bytedance.json (see README) -- ByteDance-only, and
+    optional: older performance folders recorded before this existed
+    simply have no sibling file, and get [] (no pedal-aware suppression),
+    not an error."""
+    pedal_path = Path(bd_path).parent / "bytedance-pedal.json"
+    if not pedal_path.is_file():
+        return []
+    with open(pedal_path) as f:
+        return json.load(f)
 
 
 def load_reference(path):
@@ -126,11 +142,89 @@ def _is_probable_noise(note):
     return duration < EXTRA_NOTE_SHORT_DUR_SEC and velocity < EXTRA_NOTE_LOW_VELOCITY
 
 
-def events_without_noise(events, perf_notes):
+def _is_boundary_noise(note, other_model_notes, duration_sec):
+    """A note in the first/last BOUNDARY_NOISE_WINDOW_SEC of the recording
+    that the other model doesn't corroborate -- the pre/post-roll mic
+    pickup case (performer talking or fumbling before/after playing, see
+    README) rather than a real opening/closing note. Corroborated notes
+    are never treated as boundary noise, however close to the edge --
+    if both models independently heard the same pitch at the same time,
+    that's real signal."""
+    if duration_sec is None:
+        return False
+    in_window = note["onset"] < BOUNDARY_NOISE_WINDOW_SEC or note["onset"] > duration_sec - BOUNDARY_NOISE_WINDOW_SEC
+    if not in_window:
+        return False
+    corroborated = any(
+        c["pitch"] == note["pitch"] and abs(c["onset"] - note["onset"]) <= CROSS_MODEL_WINDOW_SEC
+        for c in other_model_notes
+    )
+    return not corroborated
+
+
+def _is_pedal_sustain_bleed(note, pedal_events):
+    """A quiet onset landing while the sustain pedal was ALREADY down (not
+    just engaged at the same moment) -- the decay/resonance-bleed
+    signature described in README: a real, deliberately-played note under
+    pedal is still struck at a normal velocity, but a note's own
+    prolonged decay or a bled-through overtone only looks quiet. Requires
+    strict containment (pedal window starts before AND ends after this
+    note's onset) -- a note landing right as the pedal goes down is
+    ordinary playing, not bleed."""
+    velocity = note.get("velocity", note.get("amplitude", 0) * 127)
+    if velocity >= EXTRA_NOTE_LOW_VELOCITY:
+        return False
+    return any(p["onset"] < note["onset"] < p["offset"] for p in pedal_events)
+
+
+def events_without_noise(events, perf_notes, other_model_notes, duration_sec, pedal_events=()):
     """Drops 'ins' ops for performed notes that look like noise before
     region-grouping -- a cluster of noise artifacts next to an otherwise
     clean passage should not be reported as "notes added"."""
-    return [(op, ri, pi) for op, ri, pi in events if op != "ins" or not _is_probable_noise(perf_notes[pi])]
+    return [
+        (op, ri, pi) for op, ri, pi in events
+        if op != "ins" or not (
+            _is_probable_noise(perf_notes[pi]) or _is_boundary_noise(perf_notes[pi], other_model_notes, duration_sec)
+            or _is_pedal_sustain_bleed(perf_notes[pi], pedal_events)
+        )
+    ]
+
+
+PITCH_MARGIN_SEMITONES = 12  # one octave beyond the reference's own pitch range
+DURATION_TOLERANCE_SEC = 0.05  # small buffer for float/segment rounding at the clip boundary
+
+
+def filter_implausible_notes(notes, model_name, ref_pitches, duration_sec):
+    """Drops detected notes that can't plausibly be real performance
+    content, before they ever reach identity_pass/region-grouping --
+    two patterns found in practice (see README):
+      - a recurring ByteDance bass-register artifact at pitches 12-16+
+        semitones below anything actually in the piece (pedal noise or
+        room rumble, not a performer going a full octave-plus out of
+        range);
+      - a tail-segment hallucination whose reported offset fell AFTER
+        the recording's own end -- a note cannot end after the audio
+        stops, so that's a sanity check, not a heuristic.
+    Filtered notes are never silently lost -- the caller puts them in
+    the report (feedback.json's "filtered_notes") so an over-aggressive
+    filter would be visible, not just trusted."""
+    floor = min(ref_pitches) - PITCH_MARGIN_SEMITONES
+    ceiling = max(ref_pitches) + PITCH_MARGIN_SEMITONES
+    kept, filtered = [], []
+    for n in notes:
+        if n["pitch"] < floor:
+            reason = (f"pitch {n['pitch']} is more than {PITCH_MARGIN_SEMITONES} semitones "
+                       f"below the reference's lowest note ({min(ref_pitches)})")
+        elif n["pitch"] > ceiling:
+            reason = (f"pitch {n['pitch']} is more than {PITCH_MARGIN_SEMITONES} semitones "
+                       f"above the reference's highest note ({max(ref_pitches)})")
+        elif duration_sec is not None and n["offset"] > duration_sec + DURATION_TOLERANCE_SEC:
+            reason = f"offset {n['offset']:.3f}s exceeds the recording's own length ({duration_sec:.3f}s)"
+        else:
+            kept.append(n)
+            continue
+        filtered.append({**n, "model": model_name, "reason": reason})
+    return kept, filtered
 
 
 def robust_median_ratio(ratios):
@@ -148,7 +242,8 @@ def classify_timing(frac):
     return "excessive"
 
 
-def classify_extra(note, other_model_notes, confirmed_notes, source_label, other_label):
+def classify_extra(note, other_model_notes, confirmed_notes, source_label, other_label, duration_sec=None,
+                    pedal_events=()):
     corroborated = [
         c for c in other_model_notes
         if c["pitch"] == note["pitch"] and abs(c["onset"] - note["onset"]) <= CROSS_MODEL_WINDOW_SEC
@@ -171,9 +266,17 @@ def classify_extra(note, other_model_notes, confirmed_notes, source_label, other
     if corroborated:
         return "medium-high", "extra note (seen by both models)", \
             f"{other_label} also reports midi={note['pitch']} at t={corroborated[0]['onset']:.3f}s"
+    if _is_boundary_noise(note, other_model_notes, duration_sec):
+        edge = "start" if note["onset"] < BOUNDARY_NOISE_WINDOW_SEC else "end"
+        return "low", "likely pre/post-roll noise (suppressed)", \
+            f"t={note['onset']:.3f}s is within {BOUNDARY_NOISE_WINDOW_SEC:.0f}s of the recording's {edge}, no corroboration"
     if is_quiet and duration < HARMONIC_RESONANCE_MAX_DUR_SEC and harmonic_match is not None:
         return "low", "likely harmonic resonance (suppressed)", \
             f"dur={duration*1000:.0f}ms, {harmonic_match['pitch']-note['pitch']} semitones below concurrent midi={harmonic_match['pitch']}"
+    if _is_pedal_sustain_bleed(note, pedal_events):
+        pedal_window = next(p for p in pedal_events if p["onset"] < note["onset"] < p["offset"])
+        return "low", "likely pedal-sustain bleed (suppressed)", \
+            f"dur={duration*1000:.0f}ms, velocity/amplitude={velocity:.0f}, under pedal held {note['onset']-pedal_window['onset']:.3f}s (down since t={pedal_window['onset']:.3f}s)"
     if is_short and is_quiet:
         return "low", "likely noise artifact (suppressed)", \
             f"dur={duration*1000:.0f}ms, velocity/amplitude={velocity:.0f}, no corroboration"
@@ -181,11 +284,16 @@ def classify_extra(note, other_model_notes, confirmed_notes, source_label, other
         f"dur={duration*1000:.0f}ms, velocity/amplitude={velocity:.0f}, only in {source_label}"
 
 
-def evaluate(ref_path, bd_path, bp_path, label):
+def evaluate(ref_path, bd_path, bp_path, label, duration_sec=None):
     reference, ref_events = load_reference(ref_path)
     ref_pitches = [n["pitch"] for n in ref_events]
     bd_notes = load_notes(bd_path)
     bp_notes = load_notes(bp_path)
+    pedal_events = load_pedal_events(bd_path)
+
+    bd_notes, bd_filtered = filter_implausible_notes(bd_notes, "ByteDance", ref_pitches, duration_sec)
+    bp_notes, bp_filtered = filter_implausible_notes(bp_notes, "Basic Pitch", ref_pitches, duration_sec)
+    filtered_notes = sorted(bd_filtered + bp_filtered, key=lambda n: n["onset"])
 
     bd_by_ref, bd_events = identity_pass(ref_pitches, bd_notes)
     bp_by_ref, bp_events = identity_pass(ref_pitches, bp_notes)
@@ -195,8 +303,8 @@ def evaluate(ref_path, bd_path, bp_path, label):
     # gets one macro-level verdict instead of forced, over-precise 1:1
     # note pairing. ByteDance is primary, same as the per-note identity
     # pass above; Basic Pitch's own regions are only used to corroborate.
-    bd_regions = build_regions(events_without_noise(bd_events, bd_notes))
-    bp_regions = build_regions(events_without_noise(bp_events, bp_notes))
+    bd_regions = build_regions(events_without_noise(bd_events, bd_notes, bp_notes, duration_sec, pedal_events))
+    bp_regions = build_regions(events_without_noise(bp_events, bp_notes, bd_notes, duration_sec, pedal_events))
     reported_regions = []  # (region, region_label) for regions worth a macro verdict
     ref_idx_to_region_num = {}
     for region in bd_regions:
@@ -334,28 +442,29 @@ def evaluate(ref_path, bd_path, bp_path, label):
 
     extra_results = []
     for n in bd_extra:
-        conf, verdict, evidence = classify_extra(n, bp_notes, confirmed_bd_notes, "ByteDance", "Basic Pitch")
+        conf, verdict, evidence = classify_extra(
+            n, bp_notes, confirmed_bd_notes, "ByteDance", "Basic Pitch", duration_sec, pedal_events)
         extra_results.append({"model": "ByteDance", "onset": n["onset"], "pitch": n["pitch"],
                                "confidence": conf, "verdict": verdict, "evidence": evidence})
     for n in bp_extra:
-        conf, verdict, evidence = classify_extra(n, bd_notes, confirmed_bd_notes, "Basic Pitch", "ByteDance")
+        conf, verdict, evidence = classify_extra(
+            n, bd_notes, confirmed_bd_notes, "Basic Pitch", "ByteDance", duration_sec, pedal_events)
         extra_results.append({"model": "Basic Pitch", "onset": n["onset"], "pitch": n["pitch"],
                                "confidence": conf, "verdict": verdict, "evidence": evidence})
 
     # --- Part 5: beat-level scores (see scoring.py for the full rules) ---
-    note_score, rhythm_score, overall, scored_beats = compute_scores(
-        reference, ref_events, results, reported_regions, bd_notes, confirmed, extra_results)
+    note_score, rhythm_score, overall, scored_beats = compute_scores(reference, results, confirmed, extra_results)
 
     report = build_report(
         label, reference, results, reported_regions, ref_events, bd_notes, bp_notes, bp_regions,
-        extra_results, confirmed, note_score, rhythm_score, overall, scored_beats)
+        extra_results, confirmed, note_score, rhythm_score, overall, scored_beats, filtered_notes)
 
     print_report(report)
     return report
 
 
 def build_report(label, reference, results, reported_regions, ref_events, bd_notes, bp_notes, bp_regions,
-                  extra_results, confirmed, note_score, rhythm_score, overall, scored_beats):
+                  extra_results, confirmed, note_score, rhythm_score, overall, scored_beats, filtered_notes):
     """Everything evaluate() computes, as plain JSON-serializable data --
     the structured counterpart to print_report()'s human-readable text.
     Both are built from the exact same inputs so the UI and the CLI
@@ -424,12 +533,18 @@ def build_report(label, reference, results, reported_regions, ref_events, bd_not
         "timing_summary": timing_summary,
         "regions": regions_out,
         "extra_notes": sorted(extra_results, key=lambda e: e["onset"]),
+        "filtered_notes": filtered_notes,
         "scores": scores,
     }
 
 
 def print_report(report):
     print(f"=== {report['label']} ===")
+    if report["filtered_notes"]:
+        print("Filtered before scoring (implausible pitch or past the recording's end -- see README):")
+        for f in report["filtered_notes"]:
+            print(f"  [{f['model']}] t={f['onset']:.3f}s midi={f['pitch']}  {f['reason']}")
+        print()
     print(f"{'m:beat':>8} {'ref_t':>6} {'pitch':>5}  {'verdict':<36} {'conf':<6} {'timing':<11} evidence")
     for r in report["notes"]:
         timing_str = f"{r['timing_tier']} ({r['timing_dev_frac']*100:.0f}%)" if r["timing_tier"] else "-"

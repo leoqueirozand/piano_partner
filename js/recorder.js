@@ -72,7 +72,14 @@ function downloadRecordingAsWav(samples, sampleRate, filename = "recording.wav")
 }
 
 async function startRecording() {
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  // Explicitly off: these three are speech-call features (voice-level
+  // normalization, voice/noise separation, call-echo removal) that are on
+  // by default and actively mangle piano signal -- AGC re-boosts decaying
+  // sustain-pedal tails as if they were quiet speech, and noise
+  // suppression mistakes piano overtones/resonance for background noise.
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+  });
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   const source = audioCtx.createMediaStreamSource(stream);
   const processor = audioCtx.createScriptProcessor(4096, 1, 1);

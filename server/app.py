@@ -19,7 +19,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 
 from server.evaluate import evaluate
-from server.transcribe import run_basic_pitch, run_bytedance
+from server.transcribe import get_audio_duration, run_transkun
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PERFORMANCES_DIR = PROJECT_ROOT / "performances"
@@ -81,19 +81,18 @@ async def submit_performance(audio: UploadFile = File(...), reference: str = For
     # event loop free for /health etc. during a submit; this server
     # only ever serves one performer, so there's no real concurrency
     # benefit beyond that.
-    bytedance_notes = await run_in_threadpool(run_bytedance, recording_path, folder)
-    basic_pitch_notes = await run_in_threadpool(run_basic_pitch, recording_path, folder)
+    duration_sec = await run_in_threadpool(get_audio_duration, recording_path)
+    transkun_notes = await run_in_threadpool(run_transkun, recording_path, folder)
 
     report = await run_in_threadpool(
-        evaluate, str(reference_path), str(folder / "bytedance.json"), str(folder / "basicpitch.json"), folder_name)
+        evaluate, str(reference_path), str(folder / "transkun.json"), folder_name, duration_sec)
     (folder / "feedback.json").write_text(json.dumps(report, indent=2))
 
     return {
         "folder": folder_name,
         "recording_bytes": len(data),
         "reference": reference,
-        "bytedance_note_count": len(bytedance_notes),
-        "basic_pitch_note_count": len(basic_pitch_notes),
+        "transkun_note_count": len(transkun_notes),
         "feedback": report,
     }
 

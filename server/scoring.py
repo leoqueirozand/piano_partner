@@ -10,25 +10,33 @@ four sixteenths is worth exactly as much as a beat with one quarter note,
 per the project's framing: steer the player, don't reward them for
 picking a busy passage.
 
-Scoring rules (agreed with the user):
-  - A reference note that is matched (directly, or recovered via Basic
-    Pitch -- that's a detection-confidence distinction, not a performance
-    one) counts as full credit for its share of its beat.
-  - A reference note that is missing or wrong, but NOT part of a
-    disputed region, counts as zero credit for its share only -- one bad
-    note in a four-note beat costs 25%, not the whole beat.
-  - A beat touched by a disputed region (Part 4) is worth ZERO entirely,
-    not a fraction -- the region exists precisely because we can't say
-    how many of its notes were actually wrong, so partial credit would
-    overstate our confidence.
-  - A beat touched by an isolated extra note (not part of any region,
-    but still an unexplained/corroborated extra -- not suppressed noise)
-    is ALSO zeroed entirely, same as a disputed region: there's no fixed
-    "how many extra notes were expected" to normalize a fraction against,
-    and the player did add something the score doesn't have.
-  - Rest beats (no reference note at all) are not scored UNLESS a
-    disputed region or an extra note lands in them -- then they are
-    zeroed like any other touched beat. A clean rest stays unscored.
+Scoring rules (revised with the user in Step 19 -- see README; this
+replaces the original all-or-nothing per-beat rule, which saturated to
+0% on any beat with real note density once touch count exceeded beat
+count, regardless of how many notes were actually right):
+  - Every reference note AND every unexplained/corroborated extra note
+    (not suppressed as noise/resonance/pedal bleed -- see
+    SCORED_EXTRA_VERDICTS) is its own one-unit "slot" in whichever beat
+    it belongs to (directly, for a reference note; by estimated
+    reference-time, for an extra note -- see below). A beat's score is
+    the average credit across all its slots, reference notes and extra
+    notes alike -- so one bad note (missing, wrong, in a disputed
+    region) or one stray extra note in an otherwise-correct nine-note
+    beat costs that beat ~11%, not the whole beat.
+  - A matched reference note (directly, or recovered via Basic Pitch --
+    that's a detection-confidence distinction, not a performance one)
+    is full credit for its slot.
+  - A reference note that's missing, wrong, OR part of a disputed
+    region (Part 4) is zero credit for its own slot ONLY -- disputed
+    regions no longer zero the whole beat. This does give up some of
+    the original caution ("we can't say how many notes in the region
+    were actually wrong") in exchange for a usable signal: validated
+    against three real recordings where every beat was saturated to 0%
+    under the old rule despite 74-88% of notes actually matching.
+  - Rest beats (no reference note at all) are not scored unless an
+    extra note lands in them -- then they're scored on that extra
+    note's slot alone (0 credit, so a rest beat with one phantom note
+    in it scores 0%, same as before).
   - A reference note reclassified "matched (octave-uncertain)" (see
     evaluate.py's octave-recheck pass, right after identity resolution)
     counts as OCTAVE_UNCERTAIN_CREDIT (0.5), not full and not zero --
@@ -36,15 +44,21 @@ Scoring rules (agreed with the user):
     right pitch class, but can't tell which octave, so neither extreme
     is honest.
 
-A region's or an extra note's beat is known directly when it has a
-deleted reference note to anchor to (region["dels"]). When it doesn't
-(a pure-insertion region, or a lone extra note with no deletion nearby),
-there is no reference-time anchor of its own -- its only timestamp is in
-PERFORMANCE time, which can't be compared to the reference's beat grid
-directly once tempo is unstable. That time is estimated by interpolating
-between the two nearest CONFIRMED (matched/recovered) notes bracketing
-it, using the same local-tempo idea Part 2's IOI-ratio measurement
-already relies on.
+An extra note's beat is known directly only when it has a nearby
+deleted reference note to anchor to; a lone extra note (or one inside a
+pure-insertion region) has no reference-time anchor of its own -- its
+only timestamp is in PERFORMANCE time, which can't be compared to the
+reference's beat grid directly once tempo is unstable. That time is
+estimated by interpolating between the two nearest CONFIRMED
+(matched/recovered) notes bracketing it, using the same local-tempo
+idea Part 2's IOI-ratio measurement already relies on. A region's
+deleted reference notes don't need this estimation at all -- each one
+already has its own ref_onset and already appears once in `results`
+(as an "in disputed region #N" verdict), so it's counted through the
+ordinary per-reference-note loop below, not through the region data
+directly; `compute_note_score` doesn't need region data at all anymore,
+only `results` and the extra-notes list -- regions stay a pure
+reporting/display concept, never a second, separate input to scoring.
 
 Rhythm accuracy reuses Part 2's per-step timing tiers directly: tight
 counts full credit, noticeable half, excessive zero.
@@ -141,50 +155,42 @@ def estimate_perf_time(ref_time, confirmed_pairs):
     return estimate_ref_time(ref_time, [(p, r) for r, p in confirmed_pairs])
 
 
-def compute_note_score(reference, ref_events, results, reported_regions, bd_notes, confirmed_pairs, extra_results):
+def compute_note_score(reference, results, confirmed_pairs, extra_results):
     cells = build_beat_cells(reference)
-    beat_note_counts = {}  # (measure, beat) -> [good, total], from clean (non-region) reference notes
-    zeroed_beats = set()
+    beat_note_counts = {}  # (measure, beat) -> [credit_sum, slot_count]
 
-    for r in results:
-        if r["verdict"].startswith("in disputed region"):
-            continue  # zeroed below via the region's own span, not counted proportionally
-        # NOTE: this must be the coarse beat CELL (from the grid), not the
-        # note's own fractional "beat" label (e.g. 1.5 for an eighth after
-        # beat 1) -- using the fractional label directly would bucket each
-        # distinct sub-beat onset as its own "beat", defeating the entire
-        # point of scoring by beat rather than by note.
-        key = beat_for_ref_time(cells, r["ref_onset"])
-        credit = VERDICT_CREDIT.get(r["verdict"], 0.0)
+    def add_slot(key, credit):
+        if key is None:
+            return  # couldn't be placed in any beat -- not scored, not silently zeroed either
         bucket = beat_note_counts.setdefault(key, [0.0, 0])
         bucket[0] += credit
         bucket[1] += 1
 
-    for region, _label in reported_regions:
-        if region["dels"]:
-            ref_times = [ref_events[ri]["onset"] for ri in region["dels"]]
-            affected = {beat_for_ref_time(cells, t) for t in ref_times}
-        else:
-            perf_times = [bd_notes[pi]["onset"] for pi in region["ins"]]
-            estimated = [estimate_ref_time(t, confirmed_pairs) for t in perf_times]
-            affected = {beat_for_ref_time(cells, t) for t in estimated if t is not None}
-        zeroed_beats |= {b for b in affected if b is not None}
+    for r in results:
+        # NOTE: this must be the coarse beat CELL (from the grid), not the
+        # note's own fractional "beat" label (e.g. 1.5 for an eighth after
+        # beat 1) -- using the fractional label directly would bucket each
+        # distinct sub-beat onset as its own "beat", defeating the entire
+        # point of scoring by beat rather than by note. VERDICT_CREDIT's
+        # default of 0.0 already covers "missing", "wrong note", and "in
+        # disputed region #N" identically -- all three are simply not a
+        # clean match, at this note's own one-slot cost.
+        add_slot(beat_for_ref_time(cells, r["ref_onset"]), VERDICT_CREDIT.get(r["verdict"], 0.0))
 
+    # An unexplained/corroborated extra note (not suppressed as likely
+    # noise/resonance/pedal bleed -- see SCORED_EXTRA_VERDICTS) is its
+    # own zero-credit slot, estimated into reference time since it has
+    # no reference note of its own to anchor to directly. Only
+    # ByteDance's own classification affects scoring (see
+    # SCORED_EXTRA_VERDICTS's own comment for why).
     for e in extra_results:
         if e["model"] != "ByteDance" or e["verdict"] not in SCORED_EXTRA_VERDICTS:
             continue
         estimated = estimate_ref_time(e["onset"], confirmed_pairs)
         if estimated is not None:
-            beat = beat_for_ref_time(cells, estimated)
-            if beat is not None:
-                zeroed_beats.add(beat)
+            add_slot(beat_for_ref_time(cells, estimated), 0.0)
 
-    scored_beats = {}
-    for key, (good, total) in beat_note_counts.items():
-        scored_beats[key] = 0.0 if key in zeroed_beats else good / total
-    for key in zeroed_beats:
-        scored_beats.setdefault(key, 0.0)  # a rest beat touched only by a region/extra note
-
+    scored_beats = {key: good / total for key, (good, total) in beat_note_counts.items()}
     if not scored_beats:
         return None, scored_beats
     return 100.0 * sum(scored_beats.values()) / len(scored_beats), scored_beats
@@ -197,10 +203,8 @@ def compute_rhythm_score(results):
     return 100.0 * sum(TIMING_TIER_WEIGHTS[t] for t in tiers) / len(tiers)
 
 
-def compute_scores(reference, ref_events, results, reported_regions, bd_notes, confirmed_pairs, extra_results,
-                    note_weight=0.7, rhythm_weight=0.3):
-    note_score, scored_beats = compute_note_score(
-        reference, ref_events, results, reported_regions, bd_notes, confirmed_pairs, extra_results)
+def compute_scores(reference, results, confirmed_pairs, extra_results, note_weight=0.7, rhythm_weight=0.3):
+    note_score, scored_beats = compute_note_score(reference, results, confirmed_pairs, extra_results)
     rhythm_score = compute_rhythm_score(results)
     parts, weights = [], []
     if note_score is not None:

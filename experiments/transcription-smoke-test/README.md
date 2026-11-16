@@ -940,23 +940,554 @@ Files: `scoring.py` (`estimate_perf_time`, `VERDICT_CREDIT` with
 `OCTAVE_UNCERTAIN_CREDIT`), `evaluate.py` (new recheck pass between
 identity resolution and Part 2/extra-note classification).
 
+## Step 16 — implausible-note filtering: pitch range + duration sanity (done)
+
+Once the evaluator was wired into the web app (see the project's main
+`server/` backend) and run against real recordings instead of just the
+four hand-picked clips, two new failure patterns showed up that Steps
+7/13/15's existing noise/corroboration logic didn't catch:
+
+- **Pre-roll noise.** A recording where the user spoke/mumbled briefly
+  before playing showed ByteDance detecting a burst of note-like events
+  during that noise -- some quiet enough to already hit the Step 7
+  "noise artifact" suppression, but several loud enough (velocity
+  70-80) to be classified `"unexplained extra note (flagged, not
+  suppressed)"` instead, forming a disputed region at the very first
+  beat and zeroing it even though nothing was actually played wrong
+  there.
+- **Tail-segment hallucination.** A different recording showed
+  ByteDance reporting a note whose *offset* (8.41s) was later than the
+  recording's own length (7.15s) -- physically impossible, and
+  consistent with the model hallucinating a decaying note into
+  zero-padding at the edge of its last processing segment.
+
+Investigating both turned up a third, bigger thing: a recurring
+ByteDance artifact at pitches 36/38/40 (C2/D2/E2) -- 12-16+ semitones
+below this excerpt's actual range (52-81) -- showed up scattered
+*throughout* every one of the original four test clips too, not just
+the two new recordings. It had been quietly zeroing beats via the same
+extra-note scoring path this whole time; nobody had looked at the
+pitch values of the "noise" being flagged before, only duration and
+velocity.
+
+Fix (`filter_implausible_notes` in `evaluate.py`, applied to both
+models' note lists right after loading, before `identity_pass` ever
+runs -- so filtered notes never reach region-grouping, extra-note
+classification, or scoring at all):
+  - **Pitch floor/ceiling**: any note more than `PITCH_MARGIN_SEMITONES
+    = 12` (one octave) below the reference's own lowest pitch, or above
+    its highest, is dropped. Reference-relative, not a fixed global
+    range, since "plausible" depends on which piece is being played.
+  - **Duration sanity**: any note whose offset exceeds the recording's
+    actual length (`+ DURATION_TOLERANCE_SEC = 0.05` for rounding) is
+    dropped -- this one isn't a heuristic, a note literally cannot end
+    after the audio stops.
+
+Filtered notes are never silently discarded from the *report* -- they
+land in `feedback.json`'s `"filtered_notes"` list (and the CLI's
+printed output) with a reason string, so an over-aggressive filter
+would be visible later, not just trusted. This mirrors the project's
+running rule of never silently trusting a detector, applied to the
+filter itself.
+
+Validated two ways:
+  - **Regression on the original four clips**: `bach-clip` and
+    `wrong_notes` are byte-for-byte unchanged (no out-of-range or
+    past-the-end content in either -- `wrong_notes`'s deliberately
+    injected real mistakes are untouched, confirming no loss of
+    detection power). `unstable` and `almost_good` both improved
+    (77.8%->88.9%, 77.1%->88.2%) once the same pitch-38 artifact was
+    removed from them too -- this resolves one of the two open items
+    from Step 15 (`unstable`'s false-positive zeroed beats), though not
+    both; see below.
+  - **The two real recordings that motivated this**: pre-roll-noise
+    case went 66.7%->88.9% note accuracy (one zeroed beat left, from an
+    in-range extra note the filter correctly leaves alone); tail
+    artifact case went 55.6%->77.8% (the duration check caught exactly
+    the one physically-impossible note; two in-range, within-duration
+    tail notes remain and still cost a beat -- expected, since neither
+    new check is designed to touch an uncorroborated-but-plausible
+    extra note at a normal pitch).
+
+Files: `evaluate.py` (`filter_implausible_notes`,
+`PITCH_MARGIN_SEMITONES`, `DURATION_TOLERANCE_SEC`, new `duration_sec`
+param on `evaluate()`, defaults to `None` so the CLI usage without an
+audio file keeps working), `server/transcribe.py`
+(`get_audio_duration`, header-only read via `soundfile`), `server/app.py`
+(computes duration once per submission, passes it through).
+
+## Step 17 — pre/post-roll noise suppression by recording-boundary position (done)
+
+Step 16 fixed the pitch-range and duration-sanity cases, but both real
+recordings still had one leftover artifact each: a cluster of
+ByteDance-only, uncorroborated notes right at the very start or very
+end of the recording -- in-range, within the recording's length, so
+neither of Step 16's checks touch them. This was exactly the pre-roll
+mumbling case the user originally flagged, and it was showing up as a
+spurious "disputed region" (notes added / rhythm subdivided,
+uncorroborated by Basic Pitch) rather than being recognized as noise.
+
+The fix, `_is_boundary_noise()` in `evaluate.py`: a performed note is
+treated as pre/post-roll noise if **both** hold:
+  - its onset falls in the first or last `BOUNDARY_NOISE_WINDOW_SEC`
+    (1.0s) of the *recording itself* -- absolute time, not relative to
+    where the reference's own first/last note falls, so it doesn't
+    assume the performer started exactly on the reference's first beat;
+  - the other model does NOT independently report the same pitch at
+    the same time (the existing `CROSS_MODEL_WINDOW_SEC` corroboration
+    check, already used elsewhere). If both models agree a note is
+    there, it's real signal and is never suppressed, however close to
+    the edge.
+
+No cluster-size requirement -- a single uncorroborated note in the
+window is enough, on the same reasoning as Step 16's other checks:
+being transparent about a wrong call (logged, not hidden) matters more
+here than being conservative about when to apply it.
+
+Applied in two places that need to agree with each other:
+  - `events_without_noise()` (used before Part 4 region-grouping) now
+    also drops boundary-noise `"ins"` ops, alongside the existing
+    short-and-quiet `_is_probable_noise()` check -- so a boundary-noise
+    note can no longer form a "notes added" disputed region.
+  - `classify_extra()` (used for the final extra-notes report) gets the
+    same check, right after the corroboration check and before the
+    harmonic-resonance/noise-artifact checks, so a suppressed boundary
+    note still appears in `feedback.json`'s extra-notes list, labeled
+    `"likely pre/post-roll noise (suppressed)"` -- never silently
+    dropped from the report, same discipline as every other filter in
+    this pipeline.
+
+Both call sites needed a `duration_sec` plumbed through (`evaluate()`
+already had it from Step 16); the CLI path still defaults it to `None`,
+which makes `_is_boundary_noise()` always return `False` -- so this is
+inert for every existing CLI-driven test, by construction, not by
+coincidence.
+
+Validated two ways:
+  - **Regression on the original four clips** (CLI, no `duration_sec`):
+    byte-for-byte unchanged from Step 16 -- confirms the new check
+    truly does nothing without a real recording length.
+  - **Both real recordings, re-run end to end**: the lone disputed
+    region in each recording's report disappeared (both were exactly
+    the pre/post-roll notes this step targets), and extra notes that
+    used to read `"unexplained extra note (flagged, not suppressed)"`
+    at t=0.08s/t=6.69s etc. now correctly read
+    `"likely pre/post-roll noise (suppressed)"`. **Scores were
+    unchanged in both cases** (note/rhythm/overall identical to the
+    Step 16 numbers) -- these particular notes were never actually
+    costing points (they fell outside every scored beat's range), so
+    this step is a pure reporting-accuracy fix, not a score change.
+    That's a useful finding in itself: the pre-roll case's remaining
+    zeroed beat (1:1/1:3 in recording 1, 2:2 in recording 2) is coming
+    from something else entirely, not from these boundary notes --
+    worth re-checking against the per-note table before assuming it's
+    resolved.
+
+Files: `evaluate.py` (`_is_boundary_noise`, `BOUNDARY_NOISE_WINDOW_SEC`,
+`events_without_noise()` and `classify_extra()` both gained/reused a
+`duration_sec` parameter).
+
+## Step 18 — sustain-pedal-aware noise suppression (done)
+
+Motivation: on real-piano recordings (reverb + sustain pedal, see the
+two `orfeo-euridice-4bars-reference` test recordings), several
+"unexplained extra note (flagged, not suppressed)" entries had
+suspiciously long durations (1.0-2.5 seconds) that none of the existing
+noise checks caught -- `_is_probable_noise` requires a SHORT duration,
+so a long one escapes it outright. ByteDance's own sustain-pedal
+detection (`est_pedal_events`) was being computed at transcription time
+but thrown away -- never written to `bytedance.json`, never seen by
+the evaluator. Pedal-down periods are exactly the condition under which
+a note's own decay or a bled-through overtone can look like a separate,
+long-held "note" to the model.
+
+Fix: `transcribe.py`'s `run_bytedance()` now also writes a sibling
+`bytedance-pedal.json` (list of `{onset, offset}` pedal-down windows)
+next to `bytedance.json`. `evaluate.py` gained `load_pedal_events()`
+(returns `[]` if the sibling file doesn't exist -- fully backward
+compatible with every performance folder recorded before this step,
+and with the CLI's 4 classic clips, which have no pedal file and are
+confirmed byte-for-byte unchanged) and `_is_pedal_sustain_bleed()`: a
+note counts as pedal bleed only if it's QUIET (same
+`EXTRA_NOTE_LOW_VELOCITY` bar used elsewhere) AND its onset falls
+strictly inside a pedal-down window that started before it (not a note
+landing exactly as the pedal goes down -- that's ordinary playing, not
+bleed). Deliberately no duration requirement, unlike
+`_is_probable_noise` -- that's the whole point, since the long-duration
+cases are exactly what this is meant to catch. Wired into both
+`events_without_noise()` (region-building) and `classify_extra()` (the
+reported verdict), same pattern as Step 17's boundary-noise check.
+
+Validation: regenerated ByteDance's transcription for
+`20261112T221748Z__orfeo-euridice-4bars-reference` (non-destructively,
+into a `rerun-pedal-20261113/` subfolder, since the pedal file didn't
+exist when it was first recorded) and re-ran evaluation. 19 of the 50
+previously-unexplained extra notes were correctly reclassified as
+"likely pedal-sustain bleed (suppressed)", including the three longest
+(1916ms, 1542ms, 1086ms) -- each with a specific pedal-down window and
+how long the pedal had been held before the note's onset. Disputed
+regions dropped from 25 to 21 as a direct result (fewer spurious
+"notes added" verdicts). The 4 classic CLI clips are unaffected
+(confirmed identical note/rhythm/overall percentages to Step 17's
+numbers).
+
+Note accuracy and overall score did NOT change (still 0.0% / 14.07%,
+identical to before this step) -- expected, not a bug: this is a
+report-accuracy fix, not a scoring fix, and the beat-zeroing saturation
+issue (see Known open items) still zeroes all 12 beat cells regardless
+of how many fewer, more-accurately-labeled extra notes remain. The 19
+reclassified notes simply moved from one zero-trigger bucket to
+another; removing them from the disputed-region count did free up 4
+regions, but not enough beat cells to escape saturation on this
+particular (very dense) reference.
+
+Files: `transcribe.py` (`run_bytedance()` now also writes
+`bytedance-pedal.json`), `evaluate.py` (`load_pedal_events()`,
+`_is_pedal_sustain_bleed()`, `events_without_noise()` and
+`classify_extra()` both gained a `pedal_events` parameter).
+
+## Step 19 — proportional beat scoring, replacing all-or-nothing zeroing (done)
+
+Motivation: every improvement from Steps 16-18 (and the pitch-tuning
+and pedal-aware experiments logged in memory, not yet in this repo)
+measurably improved the underlying transcription/report accuracy on
+real recordings, but note_accuracy stayed exactly 0.0% regardless --
+confirmed structural, not a transcription problem. The
+`orfeo-euridice-4bars-reference` reference has 104 notes across only
+12 beat cells (dense: both staves merged, with ornaments). The
+original Part 5 rule zeroed a beat's ENTIRE credit the moment any
+disputed region or unexplained extra note touched it. On all three
+real test recordings, enough regions/extras existed (16-29 regions,
+43-108 extras) to touch all 12 cells at least once, saturating the
+score to 0% even though 74-88% of notes were actually matched
+correctly (per `identity_summary`) -- the score could not distinguish
+a good take from a bad one once touch density exceeded cell count.
+
+Decision (asked the user explicitly, since this reverses a previously
+agreed principle): make beat credit proportional instead of
+all-or-nothing, even at the cost of some of the original caution ("we
+can't say how many notes in a disputed region were wrong, so partial
+credit overstates confidence"). Confirmed: a usable, differentiating
+signal was worth more than that caution once it was costing 100% of
+the signal 100% of the time on real recordings.
+
+Design: every reference note AND every unexplained/corroborated extra
+note (not suppressed as noise/resonance/pedal bleed) is now its own
+one-unit "slot" in whichever beat it belongs to; a beat's score is the
+average credit across all its slots. A missing/wrong/disputed-region
+reference note costs only its own slot (as missing/wrong notes already
+did -- disputed regions just needed to stop being special-cased to
+zero the whole beat). An extra note costs its own zero-credit slot,
+estimated into reference time the same way as before. This turned out
+to simplify `compute_note_score()` significantly: disputed regions'
+`dels` already appear once each in the per-reference-note loop (as an
+"in disputed region #N" verdict, previously skipped and separately
+zeroed -- now just falls through to `VERDICT_CREDIT`'s existing 0.0
+default, no special-casing needed), and every region's `ins` performed
+note already appears in the extra-notes list with its own verdict (a
+performed note can't be both "consumed" by a region's grouping and
+still show up as "not consumed" in `bd_extra` -- it's one or the
+other), so counting it both via regions AND via extras would have
+double-penalized it. Net result: `compute_note_score()` no longer
+needs region data, `bd_notes`, or `ref_events` as inputs at all --
+regions are now purely a reporting/display concept, never a second,
+separate input to scoring. `compute_scores()`'s signature shrank to
+`(reference, results, confirmed_pairs, extra_results, ...)`.
+
+Validation:
+- 4 classic CLI clips: `bach-clip` unchanged (100%/89.5%/96.9% -- no
+  disputed regions to begin with, so nothing to be proportional
+  about). The other three, which previously had 1-3 fully-zeroed
+  beats, now have 0: `almostgood-clip` 88.2%->97.1% note accuracy
+  (86.2%->92.4% overall), `wrongnotes-clip` 65.3%->85.6%
+  (66.8%->81.0%), `unstable-clip` 88.9%->94.4% (79.7%->83.6%) -- all
+  moved up, as expected, since a single bad note in an otherwise-good
+  beat no longer costs the whole beat.
+- The three real `orfeo-euridice-4bars-reference` recordings, re-scored
+  against their existing (unmodified) transcription outputs -- no
+  re-transcription needed, confirming once again that evaluator-only
+  changes don't require re-running the ML models:
+  | recording | matched+recovered | note_accuracy | overall |
+  |---|---|---|---|
+  | real piano #1 | 83/104 (80%) | 55.1% | 52.7% |
+  | real piano #2 | 77/104 (74%) | 45.5% | 48.1% |
+  | digital piano | 92/104 (88%) | 66.1% | 61.4% |
+
+  All three moved from an identical, uninformative 0.0% to a
+  meaningfully differentiated score that ranks in the same order as
+  the underlying identity-match quality (88% > 80% > 74%) -- matching
+  the user's own subjective read of the three recordings from when
+  they were first submitted ("the last one is much clearer").
+
+Files: `scoring.py` (`compute_note_score()` rewritten around per-slot
+credit instead of a separate `zeroed_beats` override;
+`compute_scores()` signature shrank), `evaluate.py` (call site updated
+to match).
+
 ### Known open items going into the next step
 
-- The G#4 case above remains a known, structural blind spot: when both
-  models agree on the same wrong octave, nothing in this pipeline can
-  catch it without an independent pitch-verification method run on
+- The G#4 case from Step 15 remains a known, structural blind spot: when
+  both models agree on the same wrong octave, nothing in this pipeline
+  can catch it without an independent pitch-verification method run on
   every matched note -- out of scope for now, documented rather than
   chased further.
-- `unstable`'s two remaining false-positive zeroed beats are traceable
-  to Step 7's duration/velocity noise thresholds, not anything new from
-  Parts 4/5 -- still the same "needs testing against more varied
-  recordings" open item from Step 12, now with concrete repro cases
-  attached (an octave-doubling artifact too loud/long to qualify as
-  "quiet resonance," and a noise-cluster note landing a couple of
-  velocity points over the cutoff).
-- Scoring weights (70/30 note/rhythm, the 0.5 octave-uncertain credit,
-  the binary full-zero for disputed regions/extra notes) are all
-  reasonable starting points agreed with the user, not validated against
+- Resolved by Step 19: the binary full-zero-per-touched-beat rule that
+  made note_accuracy saturate to 0.0% on any dense/real recording,
+  regardless of corroboration status or how many notes were actually
+  right. Superseded the item that used to be here about corroboration
+  only flowing into the *label*, not the *score* -- still true in one
+  sense (a corroborated "extra note (seen by both models)" still costs
+  the same zero-credit slot as an uncorroborated one, since
+  `SCORED_EXTRA_VERDICTS` treats them identically), but no longer the
+  dominant problem, since a single such slot now only costs its own
+  share of a beat rather than the whole thing. Confidence-weighting
+  *within* that shared slot cost (e.g. should a corroborated extra
+  note cost less than an uncorroborated one, now that both are
+  fractional rather than both being an identical full zero) remains a
+  real, smaller, separate refinement -- not yet designed, and lower
+  priority now that the saturation problem itself is fixed.
+- Scoring weights (70/30 note/rhythm, the 0.5 octave-uncertain credit)
+  are reasonable starting points agreed with the user, not validated against
   a ground-truth scoring target -- there isn't one yet, since "what
   score should this performance get" is itself a judgment call, not a
   fact to test against.
+
+## Investigation: diagnosing real-recording transcription quality (not yet acted on)
+
+Two new real-piano recordings of `bach-3bars-reference` (no sustain
+pedal used) came in sounding "garbled" to the ear -- ByteDance's
+output had sections that sounded like noise, Basic Pitch's output was
+accurate where it detected anything but missed most of the piece. The
+question was whether this is an evaluator problem (same shape as Step
+19) or a transcription-quality ceiling.
+
+**Diagnosis:** not an evaluator bug. Both recordings have a genuine
+~1.3-1.4s lead-in silence before playing starts (confirmed via 100ms
+RMS-window dBFS profiling of `recording.wav`), which both models
+correctly reflect in their earliest onsets -- not the source of the
+"garbled" impression. The real finding: pulling every disputed region
+from both recordings' reports showed 6/6 (recording 1) and 8/9
+(recording 2) were **independently corroborated by Basic Pitch** --
+both models lost track of the exact same reference notes at the exact
+same spots. That rules out "random per-model noise" and points at two
+specific, reproducible failure patterns:
+
+1. **Simultaneous/near-simultaneous two-voice onsets.** The piece is a
+   two-voice texture (melodic 16th notes + a sustained harmony note in
+   a nearby register landing within ~190ms of the melody note). Both
+   models tend to lose or merge notes exactly there -- a documented
+   weak spot for AMT models.
+2. **A reproducible octave-confusion bug.** Reference pitch 57 (A3) at
+   ref time 3.0s (measure 2, beat 2.0) is replaced with pitch 69 (A4,
+   exactly +12 semitones) in BOTH recordings independently. Research
+   (see below) confirms this is a known, long-studied AMT failure mode:
+   low piano notes radiate little energy at their true fundamental, so
+   the recorded signal is dominated by the first harmonic an octave up,
+   and two notes an octave apart share the same harmonic series --
+   there's a genuine acoustic ambiguity to resolve, not a bug to patch.
+
+Checked whether a general-purpose multimodal LLM (sending base64
+audio to e.g. Gemini/GPT-4o-audio) could do better at this kind of
+polyphonic note-level transcription -- researched rather than assumed.
+Verdict: no. CMI-Bench (MIR benchmark for audio-text LLMs) found the
+best general audio-LLM scored ~8% (Gmean) on pitch/key tasks vs >74%
+for specialized MIR baselines; a 2025 study found Gemini 2.5's
+accuracy on simple audio music tasks (chord-quality ID) drops 40-45
+percentage points versus the same task given symbolic MIDI input, with
+chord ID on raw audio falling below 10% in some setups. No benchmark
+found shows any general multimodal LLM competitive with specialized
+AMT models (ByteDance's own checkpoint scores ~97% F1 on standard piano
+transcription benchmarks). Not pursued further -- wrong tool for this
+specific job, confirmed by research rather than by building and
+finding out.
+
+### Experiment 1 -- ByteDance onset_threshold tuning (null result)
+
+`PianoTranscription` exposes `onset_threshold` (default 0.3),
+`offset_threshod` (typo in the upstream library), `frame_threshold`
+(0.1), and `pedal_offset_threshold` (0.2) as plain settable instance
+attributes (`piano_transcription_inference/inference.py`'s
+`__init__`) -- not constructor kwargs, but settable on the
+transcriptor object before calling `.transcribe()`, since it rebuilds
+its `RegressionPostProcessor` from `self` on every call. Each of the
+88 piano-key pitch classes is thresholded independently
+(`utilities.py`'s `get_binarized_output_from_regression`, looped per
+pitch) -- a structural reason threshold tuning can't fix cross-pitch
+confusion: two different pitch channels never compete for the same
+onset slot.
+
+Tested: re-transcribed both bach recordings with `onset_threshold=0.2`
+instead of 0.3 (non-destructively, into `rerun-threshold/` subfolders
+inside each performance's own folder), re-scored against the
+unchanged Basic Pitch output. Result: no meaningful change. All 6 of
+recording 1's disputed regions reappeared with *identical*
+deleted/inserted pitches, including the same octave-confusion bug at
+the same spot. Recording 2 recovered one previously-missing note with
+negligible score impact (note_accuracy 61.8%->61.7%, i.e. noise).
+Lowering the threshold only added a few more low-confidence extra
+notes (caught cleanly by the existing noise/extra-note classifier from
+Steps 16-18).
+
+Conclusion: these failures are the model confidently producing the
+WRONG pitch or dropping real polyphonic content outright, not
+borderline/under-threshold detections -- threshold tuning structurally
+cannot fix either failure mode. Default (0.3) left unchanged; not
+adopting a lower threshold.
+
+### Experiment 2 -- WPE dereverberation preprocessing (promising, not yet adopted)
+
+Installed `nara_wpe` (pure-Python Weighted Prediction Error
+dereverberation; also pulled in `bottleneck` as a dependency).
+Dereverberated recordings non-destructively into each performance's
+own `rerun-dereverb/recording.wav` (STFT via `scipy.signal.stft`,
+`nara_wpe.wpe.wpe_v8` with `taps=10, delay=3, iterations=3`, treating
+the mono signal as a single-channel multi-frequency-bin input shaped
+`(F, D=1, T)`, then `scipy.signal.istft` back to a WAV), then
+re-transcribed with both models and re-scored against the reference.
+
+Tested on 5 real-piano recordings total -- both new `bach-3bars`
+clips, plus all three `orfeo-euridice-4bars` recordings from the
+start of this session (chosen because they were described as the
+worst reverb cases: "a lot of reverb and harmonics... sustain pedal
+mixing notes"):
+
+| recording | note_accuracy (orig -> dereverbed) | rhythm_accuracy | overall | regions | extra notes |
+|---|---|---|---|---|---|
+| bach #1 (20261113T220042Z) | 65.8% -> 65.8%* | n/a -> n/a | 70.5% -> 73.0% | 6 -> 6 | n/a |
+| bach #2 (20261113T220228Z) | 61.8% -> 70.7% | n/a -> n/a | 67.8% -> 74.9% | 9 -> 6 | n/a |
+| orfeo real piano #1 (20261112T221748Z) | 55.1% -> 54.9% | 46.9% -> 62.8% | 52.7% -> 57.3% | 25 -> 23 | 70 -> 94 |
+| orfeo real piano #2 (20261112T222141Z) | 45.5% -> 50.3% | 54.3% -> 56.6% | 48.1% -> 52.2% | 29 -> 22 | 108 -> 124 |
+| orfeo digital piano (20261112T222724Z) | 66.1% -> 67.6% | 50.5% -> 52.5% | 61.4% -> 63.1% | 15 -> 12 | 92 -> 93 |
+
+*bach #1's note_accuracy barely moved, but matched notes rose 25->29
+while recovered-via-Basic-Pitch dropped 5->2 and missing rose 3->4 --
+ByteDance resolved more notes directly, at a slightly different
+mix, netting out roughly flat on note identity specifically.
+
+Findings:
+- **Overall score improved on all 5 recordings tested, including the
+  cleanest one** (the digital piano, which has little real room
+  reverb) -- no regression observed on the case expected to benefit
+  least, which is a good sign this isn't overfit to heavy reverb.
+- The subjective quality ranking identified by ear at the very start of
+  this session (digital clearest > real piano #1 > real piano #2) is
+  preserved both before and after dereverberation.
+- The improvement's source differs by recording: orfeo real piano #1's
+  gain is almost entirely **rhythm accuracy** (46.9%->62.8%) --
+  dereverberation sharpens smeared attack transients into more precise
+  onset timing without changing which notes get identified. Real piano
+  #2 and both bach recordings improve on **both** note identity
+  (fewer disputed regions: 29->22, 9->6) and rhythm.
+- The octave-confusion bug (pitch 57->69 in the bach recordings)
+  persists **unchanged** after dereverberation in both recordings it
+  appears in -- confirms it's a harmonic-ambiguity problem independent
+  of reverb, exactly as the diagnosis above predicted.
+- **The real cost: extra/noise note counts rose substantially on all
+  three orfeo recordings** (70->94, 108->124, 92->93). WPE
+  dereverberation is an aggressive, model-free signal-processing step
+  the transcription models never saw in training, and it introduces
+  some spurious content even as it cleans up the real signal. The
+  existing noise/extra-note classification (Steps 16-18) absorbed
+  most of this without hurting the score net, but it's a real
+  tradeoff, not a free improvement.
+
+**Status: not wired into `transcribe.py` yet (explicit user decision --
+"we will not wire it into our main transcription process yet").**
+Before adopting it as a real pipeline stage, still need to check it
+doesn't regress the clean/synthetic CLI regression clips (`bach-clip`,
+etc. -- likely studio-clean audio where an aggressive dereverb pass
+could be pure downside with nothing to fix) and get a clearer read on
+whether the extra-note cost is worth the rhythm/identity gain across a
+wider sample. Logged here and in memory
+(`bytedance_threshold_tuning_null_result.md` for Experiment 1; a
+dereverberation memory to follow) so this doesn't need re-deriving.
+
+Next direction the user wants to explore instead/in addition: other
+specialized AMT models -- **Aria-AMT** and **Transkun V2** -- as
+alternatives or an ensemble member alongside ByteDance's
+`piano_transcription_inference` and Basic Pitch.
+
+### Experiment 3 -- Transkun V2 as a ByteDance replacement (large, consistent win; not yet wired in)
+
+Researched both candidates before testing anything. **Aria-AMT**
+(EleutherAI, Apache-2.0): requires a git install (`pip install -e .`,
+needs Python 3.11), is GPU-oriented (its `-compile`/`-q8` speedup
+flags reference GPU-only features, no CPU timing mentioned anywhere),
+and its README publishes no benchmark numbers at all -- couldn't even
+compare it on paper. **Transkun V2** (Yujia Yan, ISMIR 2024, MIT):
+one-line `pip install transkun`, CPU is the default device, and its
+published MAESTRO numbers already beat ByteDance's own reported
+figures on the same clean benchmark (98.4% note onset F1 vs
+ByteDance's 96.7%). Picked Transkun V2 to test first on that basis.
+Neither model's README reports any real-room/reverberant-recording
+benchmark -- same gap ByteDance's own numbers have.
+
+Installed via `pip install transkun` (pulls in its own torch/
+torchaudio/tensorboard/pandas stack -- large but self-contained, no
+native/system dependency beyond Python). Ran via its CLI:
+`transkun <recording.wav> <out.mid>` (default bundled checkpoint, CPU,
+no extra flags needed) -- non-destructively, into each performance's
+own `rerun-transkun/transkun.json` (converted from the output MIDI via
+`pretty_midi`, same `{onset, offset, pitch, velocity}` shape as
+`bytedance.json`). ~8-14s per clip on CPU, comparable to the existing
+models. Scored by substituting `transkun.json` for `bytedance.json` as
+the primary identity source in `evaluate()`, keeping the existing
+(unchanged) `basicpitch.json` as the secondary/recovery source --
+Transkun's own pedal output isn't produced by this CLI invocation, so
+`load_pedal_events()` correctly fell back to `[]` (no sibling
+`*-pedal.json` file) rather than erroring.
+
+Results, same 5 recordings as Experiment 2, compared against the
+ByteDance+Basic Pitch baseline:
+
+| recording | note_accuracy | rhythm_accuracy | overall | regions | extra notes |
+|---|---|---|---|---|---|
+| bach #1 | 65.8% -> **100%** | 81.6% -> 88.4% | 70.5% -> **96.5%** | 6 -> **0** | n/a -> **0** |
+| bach #2 | 61.8% -> **98.6%** | 82.1% -> 83.7% | 67.8% -> **94.1%** | 9 -> **0** | n/a -> 2 |
+| orfeo real #1 | 55.1% -> **78.2%** | 46.9% -> **79.3%** | 52.7% -> **78.5%** | 25 -> **6** | 70 -> **12** |
+| orfeo real #2 | 45.5% -> **80.9%** | 54.3% -> 77.6% | 48.1% -> **79.9%** | 29 -> **3** | 108 -> **20** |
+| orfeo digital | 66.1% -> **86.5%** | 50.5% -> 69.2% | 61.4% -> **81.3%** | 15 -> **4** | 92 -> 50 |
+
+Findings:
+- **A large, consistent win on every single recording tested** -- not
+  a mixed result like the dereverberation experiment. Note accuracy
+  improved 13-37 percentage points, disputed regions dropped 3-10x,
+  and both bach recordings (no sustain pedal involved) came back with
+  **zero disputed regions** -- including the one with the reproducible
+  octave-confusion bug (ref pitch 57 -> detected 69 at ref time 3.0s,
+  present in BOTH bach recordings under ByteDance, persisted even
+  through dereverberation in Experiment 2). Transkun V2 simply didn't
+  make that mistake in either recording.
+- The real-piano recordings' rhythm accuracy improved sharply too
+  (orfeo real #1: 46.9%->79.3%), suggesting Transkun's onset timing is
+  meaningfully more precise on reverberant recordings, not just its
+  pitch identity.
+- **Ranking caveat:** under ByteDance, orfeo real #1 (55.1%) scored
+  higher than real #2 (45.5%); under Transkun that order flips, barely
+  (78.2% vs 80.9%) -- the two are close enough now that which one
+  "sounds worse" may not be a stable signal either model can be
+  trusted to reproduce exactly. The digital piano recording stays
+  clearly highest under both models, which is the more important
+  signal to preserve.
+- **Real caveat, not yet resolved:** Transkun's CLI doesn't produce
+  sustain-pedal events the way ByteDance's `est_pedal_events` does, so
+  Step 18's pedal-bleed suppression can't run when Transkun is primary
+  -- some genuine pedal-sustain bleed is likely landing in the
+  "unexplained extra note" bucket instead of being correctly
+  classified and suppressed. This is the most likely explanation for
+  the digital piano recording's comparatively high extra-note count
+  (50, split ~even between "unexplained extra note" and "extra note
+  seen by both models") despite its otherwise-strong 86.5% note
+  accuracy. If Transkun is ever wired in as the primary model, ByteDance
+  would likely still need to run alongside it just to supply pedal data
+  -- an argument for an ensemble rather than a straight swap.
+
+**Status: not wired into `transcribe.py` yet.** This result is strong
+enough to be worth pursuing, but still needs: (1) the same CLI
+regression-clip check already pending for Experiment 2 (confirm no
+regression on clean/synthetic `bach-clip` etc.); (2) a decision on the
+pedal-data gap above (ensemble vs swap); (3) checking Transkun's much
+heavier dependency footprint (torch/torchaudio/tensorboard/pandas, ~50MB+
+wheel) against the project's current dependency weight before adopting
+it for real. Logged here and in memory
+(`transkun_v2_vs_bytedance_experiment.md`).

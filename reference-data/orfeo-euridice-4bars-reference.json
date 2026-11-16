@@ -1,0 +1,2496 @@
+{
+  "source_file": "scores/melody-from-orfeo-ed-euridice-christoph-willibald-gluck-g-sgambati.mxl",
+  "part_indices": [
+    0,
+    1
+  ],
+  "start_measure": 1,
+  "end_measure": 4,
+  "tempo_bpm": 50,
+  "onsets_sec": [
+    0.0,
+    0.0,
+    0.0,
+    0.3,
+    0.6,
+    0.9,
+    1.2,
+    1.2,
+    1.5,
+    1.8,
+    2.1,
+    2.4,
+    2.4,
+    2.4,
+    2.4,
+    2.4,
+    2.4,
+    2.4,
+    2.7,
+    3.0,
+    3.3,
+    3.3,
+    3.45,
+    3.6,
+    3.6,
+    3.6,
+    3.6,
+    3.9,
+    3.9,
+    4.2,
+    4.2,
+    4.5,
+    4.5,
+    4.8,
+    4.8,
+    4.8,
+    5.1,
+    5.1,
+    5.4,
+    5.4,
+    5.7,
+    5.7,
+    6.0,
+    6.0,
+    6.3,
+    6.3,
+    6.6,
+    6.6,
+    6.9,
+    6.9,
+    7.2,
+    7.2,
+    7.2,
+    7.5,
+    7.8,
+    8.1,
+    8.4,
+    8.4,
+    8.7,
+    9.0,
+    9.3,
+    9.6,
+    9.6,
+    9.6,
+    9.6,
+    9.9,
+    10.2,
+    10.5,
+    10.8,
+    10.8,
+    10.8,
+    11.1,
+    11.4,
+    11.7,
+    12.0,
+    12.0,
+    12.0,
+    12.3,
+    12.6,
+    12.9,
+    13.2,
+    13.2,
+    13.5,
+    13.8,
+    13.95,
+    14.1,
+    14.1,
+    14.25
+  ],
+  "notes": [
+    {
+      "onset_sec": 0.0,
+      "duration_sec": 2.4,
+      "midi_pitches": [
+        77
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 0.0,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        57,
+        62
+      ],
+      "pitch_names": [
+        "D",
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 0.0,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        50
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 0.3,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        65
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 1.25
+    },
+    {
+      "onset_sec": 0.6,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        62,
+        65
+      ],
+      "pitch_names": [
+        "D",
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 1.5
+    },
+    {
+      "onset_sec": 0.9,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        57
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 1.75
+    },
+    {
+      "onset_sec": 1.2,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        62,
+        65
+      ],
+      "pitch_names": [
+        "D",
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 2.0
+    },
+    {
+      "onset_sec": 1.2,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        38
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 2.0
+    },
+    {
+      "onset_sec": 1.5,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        69
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 2.25
+    },
+    {
+      "onset_sec": 1.8,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        65,
+        69
+      ],
+      "pitch_names": [
+        "F",
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 2.5
+    },
+    {
+      "onset_sec": 2.1,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        62
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 2.75
+    },
+    {
+      "onset_sec": 2.4,
+      "duration_sec": 0.0,
+      "midi_pitches": [
+        76
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 2.4,
+      "duration_sec": 0.0,
+      "midi_pitches": [
+        77
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 2.4,
+      "duration_sec": 0.0,
+      "midi_pitches": [
+        79
+      ],
+      "pitch_names": [
+        "G"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 2.4,
+      "duration_sec": 0.9,
+      "midi_pitches": [
+        77
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 2.4,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        65
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 2.4,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        65
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 2.4,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        50,
+        65
+      ],
+      "pitch_names": [
+        "D",
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 2.7,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        74
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.25
+    },
+    {
+      "onset_sec": 3.0,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        69,
+        74
+      ],
+      "pitch_names": [
+        "D",
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.5
+    },
+    {
+      "onset_sec": 3.3,
+      "duration_sec": 0.15,
+      "midi_pitches": [
+        76
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.75
+    },
+    {
+      "onset_sec": 3.3,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        65
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.75
+    },
+    {
+      "onset_sec": 3.45,
+      "duration_sec": 0.15,
+      "midi_pitches": [
+        74
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 1,
+      "beat": 3.875
+    },
+    {
+      "onset_sec": 3.6,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        74
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 3.6,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        67
+      ],
+      "pitch_names": [
+        "G"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 3.6,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        64
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 3.6,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        52
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 3.9,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        69
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 1.25
+    },
+    {
+      "onset_sec": 3.9,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        65
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 1.25
+    },
+    {
+      "onset_sec": 4.2,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        70
+      ],
+      "pitch_names": [
+        "A#"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "measure": 2,
+      "beat": 1.5
+    },
+    {
+      "onset_sec": 4.2,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        67
+      ],
+      "pitch_names": [
+        "G"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 1.5
+    },
+    {
+      "onset_sec": 4.5,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        69
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 1.75
+    },
+    {
+      "onset_sec": 4.5,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        65
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 1.75
+    },
+    {
+      "onset_sec": 4.8,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        73
+      ],
+      "pitch_names": [
+        "C#"
+      ],
+      "chroma": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 2.0
+    },
+    {
+      "onset_sec": 4.8,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        64,
+        67
+      ],
+      "pitch_names": [
+        "E",
+        "G"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 2.0
+    },
+    {
+      "onset_sec": 4.8,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        45
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 2.0
+    },
+    {
+      "onset_sec": 5.1,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        65
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 2.25
+    },
+    {
+      "onset_sec": 5.1,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        62
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 2.25
+    },
+    {
+      "onset_sec": 5.4,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        64
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 2.5
+    },
+    {
+      "onset_sec": 5.4,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        61
+      ],
+      "pitch_names": [
+        "C#"
+      ],
+      "chroma": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 2.5
+    },
+    {
+      "onset_sec": 5.7,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        62
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 2.75
+    },
+    {
+      "onset_sec": 5.7,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        58
+      ],
+      "pitch_names": [
+        "A#"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "measure": 2,
+      "beat": 2.75
+    },
+    {
+      "onset_sec": 6.0,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        61
+      ],
+      "pitch_names": [
+        "C#"
+      ],
+      "chroma": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 6.0,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        57
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 6.3,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        62
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 3.25
+    },
+    {
+      "onset_sec": 6.3,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        58
+      ],
+      "pitch_names": [
+        "A#"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "measure": 2,
+      "beat": 3.25
+    },
+    {
+      "onset_sec": 6.6,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        64
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 3.5
+    },
+    {
+      "onset_sec": 6.6,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        61
+      ],
+      "pitch_names": [
+        "C#"
+      ],
+      "chroma": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 3.5
+    },
+    {
+      "onset_sec": 6.9,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        67
+      ],
+      "pitch_names": [
+        "G"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 3.75
+    },
+    {
+      "onset_sec": 6.9,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        64
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 2,
+      "beat": 3.75
+    },
+    {
+      "onset_sec": 7.2,
+      "duration_sec": 2.4,
+      "midi_pitches": [
+        81
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 7.2,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        65
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 7.2,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        50
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 7.5,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        69
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 1.25
+    },
+    {
+      "onset_sec": 7.8,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        65,
+        69
+      ],
+      "pitch_names": [
+        "F",
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 1.5
+    },
+    {
+      "onset_sec": 8.1,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        62
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 1.75
+    },
+    {
+      "onset_sec": 8.4,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        61,
+        64
+      ],
+      "pitch_names": [
+        "C#",
+        "E"
+      ],
+      "chroma": [
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 2.0
+    },
+    {
+      "onset_sec": 8.4,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        52
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 2.0
+    },
+    {
+      "onset_sec": 8.7,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        67
+      ],
+      "pitch_names": [
+        "G"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 2.25
+    },
+    {
+      "onset_sec": 9.0,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        64,
+        67
+      ],
+      "pitch_names": [
+        "E",
+        "G"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 2.5
+    },
+    {
+      "onset_sec": 9.3,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        61
+      ],
+      "pitch_names": [
+        "C#"
+      ],
+      "chroma": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 2.75
+    },
+    {
+      "onset_sec": 9.6,
+      "duration_sec": 0.0,
+      "midi_pitches": [
+        82
+      ],
+      "pitch_names": [
+        "A#"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "measure": 3,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 9.6,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        81
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 9.6,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        62
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 9.6,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        53
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 9.9,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        69
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 3.25
+    },
+    {
+      "onset_sec": 10.2,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        65,
+        69
+      ],
+      "pitch_names": [
+        "F",
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 3.5
+    },
+    {
+      "onset_sec": 10.5,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        62
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 3,
+      "beat": 3.75
+    },
+    {
+      "onset_sec": 10.8,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        82
+      ],
+      "pitch_names": [
+        "A#"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "measure": 4,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 10.8,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        61,
+        64
+      ],
+      "pitch_names": [
+        "C#",
+        "E"
+      ],
+      "chroma": [
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 10.8,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        55
+      ],
+      "pitch_names": [
+        "G"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 1.0
+    },
+    {
+      "onset_sec": 11.1,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        70
+      ],
+      "pitch_names": [
+        "A#"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "measure": 4,
+      "beat": 1.25
+    },
+    {
+      "onset_sec": 11.4,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        64,
+        70
+      ],
+      "pitch_names": [
+        "E",
+        "A#"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "measure": 4,
+      "beat": 1.5
+    },
+    {
+      "onset_sec": 11.7,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        61
+      ],
+      "pitch_names": [
+        "C#"
+      ],
+      "chroma": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 1.75
+    },
+    {
+      "onset_sec": 12.0,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        81
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 2.0
+    },
+    {
+      "onset_sec": 12.0,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        62
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 2.0
+    },
+    {
+      "onset_sec": 12.0,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        53
+      ],
+      "pitch_names": [
+        "F"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 2.0
+    },
+    {
+      "onset_sec": 12.3,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        69
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 2.25
+    },
+    {
+      "onset_sec": 12.6,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        65,
+        69
+      ],
+      "pitch_names": [
+        "F",
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 2.5
+    },
+    {
+      "onset_sec": 12.9,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        62
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 2.75
+    },
+    {
+      "onset_sec": 13.2,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        61,
+        64
+      ],
+      "pitch_names": [
+        "C#",
+        "E"
+      ],
+      "chroma": [
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 13.2,
+      "duration_sec": 1.2,
+      "midi_pitches": [
+        57
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 3.0
+    },
+    {
+      "onset_sec": 13.5,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        69
+      ],
+      "pitch_names": [
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 3.25
+    },
+    {
+      "onset_sec": 13.8,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        64,
+        69
+      ],
+      "pitch_names": [
+        "E",
+        "A"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 3.5
+    },
+    {
+      "onset_sec": 13.95,
+      "duration_sec": 0.15,
+      "midi_pitches": [
+        85
+      ],
+      "pitch_names": [
+        "C#"
+      ],
+      "chroma": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 3.625
+    },
+    {
+      "onset_sec": 14.1,
+      "duration_sec": 0.15,
+      "midi_pitches": [
+        86
+      ],
+      "pitch_names": [
+        "D"
+      ],
+      "chroma": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 3.75
+    },
+    {
+      "onset_sec": 14.1,
+      "duration_sec": 0.3,
+      "midi_pitches": [
+        61
+      ],
+      "pitch_names": [
+        "C#"
+      ],
+      "chroma": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 3.75
+    },
+    {
+      "onset_sec": 14.25,
+      "duration_sec": 0.15,
+      "midi_pitches": [
+        88
+      ],
+      "pitch_names": [
+        "E"
+      ],
+      "chroma": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "measure": 4,
+      "beat": 3.875
+    }
+  ],
+  "beats": [
+    {
+      "measure": 1,
+      "beat": 1,
+      "onset_sec": 0.0,
+      "duration_sec": 1.2
+    },
+    {
+      "measure": 1,
+      "beat": 2,
+      "onset_sec": 1.2,
+      "duration_sec": 1.2
+    },
+    {
+      "measure": 1,
+      "beat": 3,
+      "onset_sec": 2.4,
+      "duration_sec": 1.2
+    },
+    {
+      "measure": 2,
+      "beat": 1,
+      "onset_sec": 3.6,
+      "duration_sec": 1.2
+    },
+    {
+      "measure": 2,
+      "beat": 2,
+      "onset_sec": 4.8,
+      "duration_sec": 1.2
+    },
+    {
+      "measure": 2,
+      "beat": 3,
+      "onset_sec": 6.0,
+      "duration_sec": 1.2
+    },
+    {
+      "measure": 3,
+      "beat": 1,
+      "onset_sec": 7.2,
+      "duration_sec": 1.2
+    },
+    {
+      "measure": 3,
+      "beat": 2,
+      "onset_sec": 8.4,
+      "duration_sec": 1.2
+    },
+    {
+      "measure": 3,
+      "beat": 3,
+      "onset_sec": 9.6,
+      "duration_sec": 1.2
+    },
+    {
+      "measure": 4,
+      "beat": 1,
+      "onset_sec": 10.8,
+      "duration_sec": 1.2
+    },
+    {
+      "measure": 4,
+      "beat": 2,
+      "onset_sec": 12.0,
+      "duration_sec": 1.2
+    },
+    {
+      "measure": 4,
+      "beat": 3,
+      "onset_sec": 13.2,
+      "duration_sec": 1.2
+    }
+  ]
+}
