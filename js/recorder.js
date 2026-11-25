@@ -10,6 +10,26 @@
 
 let recorderState = null;
 
+// Phones/interfaces commonly record at 48000Hz or other native rates;
+// the backend's transcription model and the rest of the pipeline assume
+// one fixed rate, so every recording is resampled to this before it's
+// WAV-encoded and submitted.
+const RECORDING_SAMPLE_RATE = 44100;
+
+async function resampleRecording(decodedBuffer) {
+  const resampleCtx = new OfflineAudioContext(
+    1, // mono output
+    Math.ceil(decodedBuffer.duration * RECORDING_SAMPLE_RATE),
+    RECORDING_SAMPLE_RATE
+  );
+  const source = resampleCtx.createBufferSource();
+  source.buffer = decodedBuffer;
+  source.connect(resampleCtx.destination);
+  source.start();
+  const resampled = await resampleCtx.startRendering();
+  return resampled.getChannelData(0);
+}
+
 /**
  * Encodes Float32 PCM samples as a standard 16-bit PCM WAV Blob.
  *
@@ -97,7 +117,7 @@ async function startRecording() {
 
 /**
  * Stops capture and returns { samples, sampleRate } resampled to
- * ESSENTIA_SAMPLE_RATE (44100), ready to pass straight into analyzeSamples().
+ * RECORDING_SAMPLE_RATE (44100), ready to WAV-encode and submit.
  */
 async function stopRecording() {
   if (!recorderState) throw new Error("not recording");
@@ -121,6 +141,6 @@ async function stopRecording() {
   buffer.copyToChannel(merged, 0);
   await audioCtx.close();
 
-  const samples = await resampleToEssentiaRate(buffer);
-  return { samples, sampleRate: ESSENTIA_SAMPLE_RATE };
+  const samples = await resampleRecording(buffer);
+  return { samples, sampleRate: RECORDING_SAMPLE_RATE };
 }

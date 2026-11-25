@@ -6,11 +6,8 @@
   <style>
     body { font-family: sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
     label { display: block; margin-top: 1rem; font-weight: bold; }
-    canvas { border: 1px solid #ddd; margin-top: 0.5rem; width: 100%; max-width: 860px; height: 180px; }
-    pre { background: #f5f5f5; padding: 1rem; overflow-x: auto; max-height: 400px; }
     button { margin-top: 1rem; padding: 0.5rem 1.5rem; font-size: 1rem; cursor: pointer; }
-    #status { margin-top: 0.5rem; color: #555; }
-    .summary { margin-top: 1rem; padding: 1rem; background: #eef; border-radius: 4px; }
+    #recordStatus, #submitStatus { margin-top: 0.5rem; color: #555; }
     #feedbackPanel table { border-collapse: collapse; margin: 0.5rem 0 1rem; }
     #feedbackPanel td, #feedbackPanel th { border: 1px solid #ddd; padding: 2px 8px; font-size: 0.9rem; }
     #feedbackPanel { margin-top: 1rem; padding: 1rem; background: #efe; border-radius: 4px; }
@@ -18,61 +15,46 @@
 </head>
 <body>
   <h1>Piano Partner — core evaluator prototype</h1>
-  <p>Capture → align against sheet-music reference → extract performance diff. No full polyphonic pitch transcription attempted; see confidence tiers in output.</p>
+  <p>Record a performance → align against a sheet-music reference → get a note/rhythm accuracy report.</p>
 
   <label for="refInput">Reference JSON (from reference-prep/make_reference.py)</label>
   <input id="refInput" type="file" accept=".json" />
+  <span id="refRangeHint"></span>
 
-  <label for="audioInput">Performance recording (.wav / .mp3)</label>
-  <input id="audioInput" type="file" accept="audio/*" />
+  <label for="startMeasureInput">Measure range to evaluate (leave blank for the whole piece)</label>
+  <input id="startMeasureInput" type="number" min="1" placeholder="start measure" style="width: 8rem;" />
+  &ndash;
+  <input id="endMeasureInput" type="number" min="1" placeholder="end measure" style="width: 8rem;" />
 
-  <label>Or record directly in-app (captures raw PCM, no lossy codec)</label>
+  <label>Record your performance (captures raw PCM, no lossy codec)</label>
   <button id="recordBtn" type="button">Record</button>
   <button id="stopRecordBtn" type="button" disabled>Stop</button>
   <button id="saveWavBtn" type="button" disabled>Save as .wav (dev/testing only)</button>
+  <label style="display:inline; font-weight:normal; margin-left:1rem;">
+    <input id="persistInput" type="checkbox" />
+    Save this recording + results to disk (performances/)
+  </label>
   <button id="submitBtn" type="button">Submit for evaluation</button>
   <span id="recordStatus"></span>
   <span id="submitStatus"></span>
 
+  <h3>Progress on this reference + range</h3>
+  <canvas id="progressChart" height="280"></canvas>
+  <p id="progressHint" style="color:#555;"></p>
+
   <div id="feedbackPanel" style="display:none"></div>
 
-  <label for="tempoMode">Tempo comparison mode</label>
-  <select id="tempoMode">
-    <option value="fixed">Fixed — diff against the reference's literal target tempo</option>
-    <option value="adaptive">Adaptive — diff against your own detected overall tempo (rhythmic consistency only)</option>
-  </select>
-
-  <button id="runBtn">Analyze</button>
-  <div id="status"></div>
-
-  <div class="summary" id="summary" style="display:none"></div>
-
-  <canvas id="onsetCanvas" width="860" height="180"></canvas>
-  <canvas id="pitchCanvas" width="860" height="140"></canvas>
-
-  <h3>Raw diff JSON</h3>
-  <button id="copyJsonBtn">Copy JSON</button>
-  <pre id="jsonOut">(run an analysis to see output)</pre>
-
-  <!-- Essentia.js prebuilt browser bundles, loaded via CDN (no build step). -->
-  <script src="https://unpkg.com/essentia.js/dist/essentia-wasm.web.js"></script>
-  <script src="https://unpkg.com/essentia.js/dist/essentia.js-core.js"></script>
-
-  <script src="js/audio-analysis.js?v=10"></script>
-  <script src="js/recorder.js?v=10"></script>
-  <script src="js/alignment.js?v=10"></script>
-  <script src="js/diff.js?v=10"></script>
-  <script src="js/visualize.js?v=10"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="js/recorder.js?v=12"></script>
+  <script src="js/history.js?v=12"></script>
+  <script src="js/visualize.js?v=12"></script>
 
   <script>
-    const statusEl = document.getElementById("status");
-    const summaryEl = document.getElementById("summary");
     const recordStatusEl = document.getElementById("recordStatus");
     const recordBtn = document.getElementById("recordBtn");
     const stopRecordBtn = document.getElementById("stopRecordBtn");
     const saveWavBtn = document.getElementById("saveWavBtn");
-    let lastDiff = null;
-    let recordedPerformance = null; // { samples, sampleRate }, set after Stop; takes priority over the file input when present
+    let recordedPerformance = null; // { samples, sampleRate }, set after Stop
 
     recordBtn.addEventListener("click", async () => {
       try {
@@ -94,7 +76,7 @@
       try {
         recordedPerformance = await stopRecording();
         const durationSec = recordedPerformance.samples.length / recordedPerformance.sampleRate;
-        recordStatusEl.textContent = `Captured ${durationSec.toFixed(1)}s. Ready to analyze.`;
+        recordStatusEl.textContent = `Captured ${durationSec.toFixed(1)}s. Ready to submit.`;
         saveWavBtn.disabled = false;
       } catch (err) {
         console.error(err);
@@ -110,42 +92,94 @@
       downloadRecordingAsWav(recordedPerformance.samples, recordedPerformance.sampleRate, filename);
     });
 
-    document.getElementById("copyJsonBtn").addEventListener("click", async () => {
-      const copyBtn = document.getElementById("copyJsonBtn");
-      if (!lastDiff) {
-        statusEl.textContent = "Nothing to copy yet -- run an analysis first.";
-        return;
-      }
-      try {
-        await navigator.clipboard.writeText(JSON.stringify(lastDiff, null, 2));
-        copyBtn.textContent = "Copied!";
-      } catch (err) {
-        copyBtn.textContent = "Copy failed";
-        console.error(err);
-      }
-      setTimeout(() => { copyBtn.textContent = "Copy JSON"; }, 1500);
-    });
-
     const BACKEND_URL = "http://127.0.0.1:8787";
     const submitBtn = document.getElementById("submitBtn");
     const submitStatusEl = document.getElementById("submitStatus");
     const feedbackPanelEl = document.getElementById("feedbackPanel");
+    const refRangeHintEl = document.getElementById("refRangeHint");
+    const startMeasureInput = document.getElementById("startMeasureInput");
+    const endMeasureInput = document.getElementById("endMeasureInput");
+    const progressChartEl = document.getElementById("progressChart");
+    const progressHintEl = document.getElementById("progressHint");
+    const persistInput = document.getElementById("persistInput");
+
+    let currentPieceRange = null; // { lo, hi }, from the selected reference file's own measures
+
+    // The bucket for the CURRENTLY SELECTED reference+range, normalized the
+    // same way the backend resolves a blank start/end (see
+    // server/reference_range.py): blank -> the piece's own first/last
+    // measure. This must match how recordAttempt() keys a just-submitted
+    // attempt (using the server's echoed-back start_measure/end_measure),
+    // or a freshly recorded attempt wouldn't show up under the selection
+    // that produced it.
+    function currentSelection() {
+      const refFile = document.getElementById("refInput").files[0];
+      if (!refFile || !currentPieceRange) return null;
+      const start = startMeasureInput.value ? parseInt(startMeasureInput.value, 10) : currentPieceRange.lo;
+      const end = endMeasureInput.value ? parseInt(endMeasureInput.value, 10) : currentPieceRange.hi;
+      return { refName: refFile.name, start, end };
+    }
+
+    function refreshProgressChart() {
+      const sel = currentSelection();
+      const entries = sel ? getAttempts(sel.refName, sel.start, sel.end) : [];
+      renderProgressChart(progressChartEl, entries, (entry) => {
+        feedbackPanelEl.style.display = "block";
+        const whereStr = entry.saved ? `saved to performances/${entry.folder}/` : "not saved to disk";
+        progressHintEl.textContent = `Showing a past attempt (${whereStr}) -- submit again to see the latest.`;
+        renderFeedback(feedbackPanelEl, entry.feedback);
+      });
+      progressHintEl.textContent = entries.length
+        ? `${entries.length} attempt(s) recorded this session for this reference + range.`
+        : "No attempts recorded yet this session for this reference + range.";
+    }
+
+    // Shows the piece's full measure range as a hint only -- the file
+    // input never sends this JSON to the server (submit only sends the
+    // filename; the backend re-reads its own copy, see app.py), so this
+    // is purely a client-side convenience for picking a range.
+    document.getElementById("refInput").addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      refRangeHintEl.textContent = "";
+      currentPieceRange = null;
+      if (!file) { refreshProgressChart(); return; }
+      try {
+        const reference = JSON.parse(await file.text());
+        const measures = (reference.beats || reference.notes || []).map((x) => x.measure);
+        if (measures.length) {
+          const lo = Math.min(...measures), hi = Math.max(...measures);
+          currentPieceRange = { lo, hi };
+          refRangeHintEl.textContent = ` (piece has measures ${lo}-${hi})`;
+          startMeasureInput.min = lo;
+          startMeasureInput.max = hi;
+          endMeasureInput.min = lo;
+          endMeasureInput.max = hi;
+        }
+      } catch (err) {
+        refRangeHintEl.textContent = " (couldn't read measure range from this file)";
+      }
+      refreshProgressChart();
+    });
+
+    startMeasureInput.addEventListener("input", refreshProgressChart);
+    endMeasureInput.addEventListener("input", refreshProgressChart);
 
     submitBtn.addEventListener("click", async () => {
       const refFile = document.getElementById("refInput").files[0];
-      const audioFile = document.getElementById("audioInput").files[0];
-      if (!refFile || (!audioFile && !recordedPerformance)) {
-        submitStatusEl.textContent = "Select a reference JSON and either upload a recording or record one in-app first.";
+      if (!refFile || !recordedPerformance) {
+        submitStatusEl.textContent = "Select a reference JSON and record a performance first.";
         return;
       }
 
-      const audioBlob = recordedPerformance
-        ? encodeWav(recordedPerformance.samples, recordedPerformance.sampleRate)
-        : audioFile;
+      const audioBlob = encodeWav(recordedPerformance.samples, recordedPerformance.sampleRate);
 
       const form = new FormData();
       form.append("reference", refFile.name);
       form.append("audio", audioBlob, "recording.wav");
+      if (startMeasureInput.value) form.append("start_measure", startMeasureInput.value);
+      if (endMeasureInput.value) form.append("end_measure", endMeasureInput.value);
+      const shouldPersist = persistInput.checked;
+      if (shouldPersist) form.append("save", "true");
 
       submitBtn.disabled = true;
       feedbackPanelEl.style.display = "none";
@@ -157,67 +191,24 @@
           throw new Error(`${res.status} ${text}`);
         }
         const result = await res.json();
-        submitStatusEl.textContent = `Done. Saved to performances/${result.folder}/`;
+        // The checkbox reflects a one-time choice for THIS submission, not a
+        // sticky setting -- clear it so the next recording isn't persisted
+        // by accident just because the last one was.
+        persistInput.checked = false;
+        submitStatusEl.textContent = result.saved
+          ? `Done (measures ${result.start_measure}-${result.end_measure}). Saved to performances/${result.folder}/`
+          : `Done (measures ${result.start_measure}-${result.end_measure}). Not saved to disk.`;
         feedbackPanelEl.style.display = "block";
         renderFeedback(feedbackPanelEl, result.feedback);
+
+        recordAttempt(refFile.name, result.start_measure, result.end_measure, result.folder, result.saved, result.feedback);
+        refreshProgressChart();
       } catch (err) {
         console.error(err);
         submitStatusEl.textContent = "Evaluation failed: " + err.message +
           " (is the backend running? .venv/bin/uvicorn server.app:app --port 8787)";
       } finally {
         submitBtn.disabled = false;
-      }
-    });
-
-    document.getElementById("runBtn").addEventListener("click", async () => {
-      const refFile = document.getElementById("refInput").files[0];
-      const audioFile = document.getElementById("audioInput").files[0];
-      if (!refFile || (!audioFile && !recordedPerformance)) {
-        statusEl.textContent = "Select a reference JSON and either upload a recording or record one in-app first.";
-        return;
-      }
-
-      try {
-        statusEl.textContent = "Loading reference...";
-        const reference = JSON.parse(await refFile.text());
-
-        statusEl.textContent = "Analyzing performance audio (onsets, dynamics, pitch, chroma)...";
-        const performance = recordedPerformance
-          ? await analyzeSamples(recordedPerformance.samples, recordedPerformance.sampleRate)
-          : await analyzePerformance(audioFile);
-
-        statusEl.textContent = "Aligning against reference (DTW)...";
-        const refChroma = reference.notes.map((n) => n.chroma);
-        const alignment = dtwAlign(performance.alignmentFeatures, refChroma);
-
-        statusEl.textContent = "Building diff...";
-        const tempoMode = document.getElementById("tempoMode").value;
-        const diff = buildDiff(reference, performance, alignment, { tempoMode });
-        lastDiff = diff;
-
-        drawOnsetTimeline(document.getElementById("onsetCanvas"), reference, performance, diff);
-        drawPitchContour(document.getElementById("pitchCanvas"), performance);
-        renderDiffJson(document.getElementById("jsonOut"), diff);
-
-        summaryEl.style.display = "block";
-        summaryEl.innerHTML = `
-          <strong>${diff.noteCount}/${diff.referenceNoteCount} reference notes matched</strong>
-          (detected ${Math.round(diff.onsetCountRatio * diff.referenceNoteCount)} onsets total,
-          ${diff.mergedNoteCount} reference notes shared a detected onset)<br>
-          Mode: <strong>${diff.tempoMode}</strong>
-          ${diff.tempoMode === "adaptive" ? `(estimated tempo ≈ ${diff.estimatedTempoBpm} bpm, scale ${diff.tempoScale}x reference)` : ""}<br>
-          Mean |timing deviation|: ${diff.meanAbsTimingDeviationSec}s &nbsp;
-          Max |timing deviation|: ${diff.maxAbsTimingDeviationSec}s<br>
-          Tempo stability (actual/expected IOI ratio): mean=${diff.tempoStability.meanRatio}, stdDev=${diff.tempoStability.stdDevRatio}<br>
-          Low-confidence chroma matches: ${diff.lowConfidenceMatchCount}/${diff.noteCount} (${diff.lowConfidenceMatchFraction})<br>
-          Melody interval check: ${diff.intervalMatchFraction === null ? "n/a" : diff.intervalMatchFraction} match rate
-          (coverage ${diff.intervalCheckCoverageFraction} — fraction of transitions with a usable pitch estimate)
-        `;
-
-        statusEl.textContent = "Done.";
-      } catch (err) {
-        console.error(err);
-        statusEl.textContent = "Error: " + err.message;
       }
     });
   </script>
